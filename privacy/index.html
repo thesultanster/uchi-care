@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Privacy Policy | Uchi</title>
+    <meta name="description" content="Uchi privacy policy.">
+    <link rel="icon" href="/assets/icon.png">
+    <link rel="stylesheet" href="/assets/site.css">
+  </head>
+  <body>
+    <header class="shell nav">
+      <a class="brand" href="/"><img src="/assets/icon.png" alt=""><span>Uchi</span></a>
+      <nav class="nav-links" aria-label="Main">
+        <a href="/privacy/">Privacy</a>
+        <a href="/support/">Support</a>
+        <a href="/join/">Join</a>
+      </nav>
+    </header>
+    <main class="shell page">
+      <span class="eyebrow">Effective July 4, 2026</span>
+      <h1>Privacy Policy</h1>
+      <section class="prose">
+        <p>Uchi is made by Mimis Code. This policy says what we collect, why, and what we never do.</p>
+
+        <h2>The short version</h2>
+        <ul>
+          <li>Your chores, cards, and history sync to our servers so your household shares one board.</li>
+          <li>You can use Uchi without an email. If you add one, we use it only to sign you in.</li>
+          <li>Selfies are used once to draw your character, then discarded. The photo itself is never stored on our servers.</li>
+          <li>We do not sell data, run ads, or use third-party trackers.</li>
+        </ul>
+
+        <h2>What we collect</h2>
+        <table>
+          <thead>
+            <tr><th>Data</th><th>Why</th><th>Where it lives</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Account, anonymous ID, or email if you add one</td><td>Sign-in and keeping your household attached to you</td><td>Supabase</td></tr>
+            <tr><td>Display name</td><td>Shown on cards and the board to your household</td><td>Supabase</td></tr>
+            <tr><td>Cards, completions, and steals</td><td>The core app experience</td><td>Supabase, scoped to your household</td></tr>
+            <tr><td>Mascot choice and generated character art</td><td>Rendering your cards</td><td>Supabase Storage</td></tr>
+            <tr><td>A selfie, if you choose the selfie character feature</td><td>Sent once to generate cartoon art</td><td>Processed in memory and not stored as the original photo</td></tr>
+          </tbody>
+        </table>
+
+        <h2>What we do not do</h2>
+        <ul>
+          <li>No ads, analytics SDKs, data brokers, or selling/sharing data for marketing.</li>
+          <li>No reading your contacts, location, or photo library beyond the single image you pick.</li>
+          <li>Household data is only visible to members of your household, enforced with database row-level security.</li>
+        </ul>
+
+        <h2>Third-party processors</h2>
+        <ul>
+          <li>Supabase: database, authentication, and file storage.</li>
+          <li>Google Gemini API: receives the selfie if you use that feature, and card scene images solely to generate artwork.</li>
+        </ul>
+
+        <h2>Your controls</h2>
+        <ul>
+          <li>Save or stay anonymous: email is optional; anonymous accounts work fully.</li>
+          <li>Delete your account: Method tab &rarr; Account &rarr; Delete account.</li>
+          <li>Invites: invite codes expire and are single-use.</li>
+        </ul>
+
+        <h2>Children</h2>
+        <p>Uchi is not directed at children under 13 and we do not knowingly collect their data.</p>
+
+        <h2>Changes and contact</h2>
+        <p>We will update this page when the policy changes. Questions: <a href="mailto:khansultan024@gmail.com">khansultan024@gmail.com</a>.</p>
+      </section>
+    </main>
+  </body>
+</html>

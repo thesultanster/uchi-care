@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Join Uchi</title>
+    <meta name="description" content="Use an invite code to join a Uchi household.">
+    <link rel="icon" href="/assets/icon.png">
+    <link rel="stylesheet" href="/assets/site.css">
+  </head>
+  <body>
+    <header class="shell nav">
+      <a class="brand" href="/"><img src="/assets/icon.png" alt=""><span>Uchi</span></a>
+      <nav class="nav-links" aria-label="Main">
+        <a href="/privacy/">Privacy</a>
+        <a href="/support/">Support</a>
+        <a href="/join/">Join</a>
+      </nav>
+    </header>
+    <main class="shell page">
+      <span class="eyebrow">Private beta</span>
+      <h1>Got an invite?</h1>
+      <section class="prose">
+        <p>Open Uchi, tap <strong>I have an invite code</strong>, and enter the code your household sent you.</p>
+        <div class="join-box">
+          <div class="code" id="invite-code">YOUR-CODE</div>
+          <a class="button" href="uchi://">Open Uchi</a>
+        </div>
+        <p class="notice">If Uchi is not installed yet, wait for your TestFlight invite or ask your household owner for access. Uchi is not publicly available on the App Store yet.</p>
+      </section>
+    </main>
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get('code');
+      if (code) document.getElementById('invite-code').textContent = code.toUpperCase();
+    </script>
+  </body>
+</html>
