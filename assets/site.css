@@ -308,3 +308,32 @@ h1 {
     flex-direction: column;
   }
 }
+
+/* ---- SEO landing additions (2026-07-05) ---- */
+.nav-cta { background: var(--brand); color: #fff !important; padding: 8px 14px; border-radius: 10px; font-weight: 800; text-decoration: none; }
+.section-title { font-size: 28px; letter-spacing: -0.5px; margin: 0 0 18px; }
+.shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
+.shots figure { margin: 0; }
+.shots img { width: 100%; border-radius: 18px; border: 1px solid var(--line); box-shadow: 0 6px 18px rgba(31,41,51,.08); }
+.shots figcaption { font-size: 12.5px; color: var(--muted); margin-top: 6px; text-align: center; }
+.how { padding: 46px 0; }
+.guides-grid .guide-tile { text-decoration: none; display: flex; flex-direction: column; gap: 8px; }
+.guide-tile h2, .guide-tile h3 { font-size: 17px; margin: 0; }
+.guide-tile .more { color: var(--brand); font-weight: 700; font-size: 14px; margin-top: auto; }
+.faq { padding: 46px 0; max-width: 760px; }
+.faq-item { border-bottom: 1px solid var(--line); padding: 4px 0; }
+.faq-item summary { cursor: pointer; list-style: none; padding: 12px 0; }
+.faq-item summary h3 { display: inline; font-size: 16.5px; margin: 0; }
+.faq-item p { color: var(--muted); margin: 0 0 14px; }
+.cta-band { text-align: center; padding: 56px 0; }
+.cta-inner h2 { font-size: 30px; margin: 0 0 8px; }
+.article { max-width: 720px; padding-bottom: 40px; }
+.article h1 { font-size: 32px; letter-spacing: -0.7px; line-height: 1.15; }
+.article h2 { font-size: 21px; margin-top: 30px; }
+.crumbs { font-size: 13px; color: var(--muted); margin: 14px 0 6px; }
+.crumbs a { color: var(--muted); }
+.cta-inline { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 20px; margin: 30px 0; }
+.cta-inline h2 { margin-top: 0; }
+.related { font-size: 14px; color: var(--muted); }
+.footer-grid { display: flex; flex-wrap: wrap; gap: 14px; justify-content: space-between; align-items: baseline; }
+.fineprint { font-size: 12.5px; color: var(--muted); }

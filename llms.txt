@@ -1,0 +1,23 @@
+# Uchi
+
+> Uchi (うち — "our home") is an iPhone app that turns household chores into manga trading cards: one owner per card, a written definition of done, weekly quests that roll over automatically, and a Review tab that keeps receipts of who did what. Built for couples and households who are done arguing about chores. Free in beta.
+
+## App
+
+- [Uchi — Chore Trading Cards](https://uchi.care/): landing page, screenshots, and FAQ
+- [App Store](https://apps.apple.com/app/id6787610855): iPhone download (live at launch)
+- [Join a house](https://uchi.care/join/): enter a partner invite code
+
+## Guides
+
+- [What makes a good chore app for couples?](https://uchi.care/guides/chore-app-for-couples/): What to look for in a chore app for couples: one owner per task, a shared definition of done, and a record of who did what. How Uchi does it with trading cards.
+- [How do you split chores with your partner without a fight?](https://uchi.care/guides/split-chores-with-partner/): A fair way to split chores with your spouse or partner: assign whole jobs to one owner instead of splitting tasks 50/50, agree on "done," and review weekly.
+- [What is the mental load, and how do you actually share it?](https://uchi.care/guides/mental-load/): The mental load is the invisible work of noticing, planning, and remembering household tasks. Here’s how to make it visible and actually share it with your partner.
+- [What does a chore chart for adults actually look like?](https://uchi.care/guides/chore-chart-for-adults/): A chore chart for adults needs ownership and standards, not gold stars. How to build one that survives real life — and why trading cards beat a fridge grid.
+- [How do you make chores fun for adults?](https://uchi.care/guides/gamified-chores-for-adults/): Gamified chores for adults work when the game is about fairness, not points. Manga trading cards, quests, steals, and receipts — how Uchi makes housework playable.
+- [How do you stop arguing about chores?](https://uchi.care/guides/stop-arguing-about-chores/): Couples argue about chores more than money. The fix isn’t trying harder — it’s one owner per job, an agreed standard, and receipts. Here’s the playbook.
+
+## Policies
+
+- [Privacy policy](https://uchi.care/privacy/): what Uchi collects (very little) and the one-time selfie rule
+- [Support](https://uchi.care/support/): contact gophers.rips-6i@icloud.com
