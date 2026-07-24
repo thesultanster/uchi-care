@@ -19,5 +19,6 @@
 
 ## Policies
 
+- [Terms of Use](https://uchi.care/terms/): Uchi account and auto-renewing subscription terms
 - [Privacy policy](https://uchi.care/privacy/): what Uchi collects (very little) and the one-time selfie rule
 - [Support](https://uchi.care/support/): contact gophers.rips-6i@icloud.com

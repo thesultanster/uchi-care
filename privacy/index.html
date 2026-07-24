@@ -12,14 +12,14 @@
     <header class="shell nav">
       <a class="brand" href="/"><img src="/assets/icon.png" alt=""><span>Uchi</span></a>
       <nav class="nav-links" aria-label="Main">
-        <a href="/privacy/">Privacy</a>
         <a href="/terms/">Terms</a>
+        <a href="/privacy/">Privacy</a>
         <a href="/support/">Support</a>
         <a href="/join/">Join</a>
       </nav>
     </header>
     <main class="shell page">
-      <span class="eyebrow">Effective July 4, 2026</span>
+      <span class="eyebrow">Effective July 24, 2026</span>
       <h1>Privacy Policy</h1>
       <section class="prose">
         <p>Uchi is made by Mimis Code. This policy says what we collect, why, and what we never do.</p>
@@ -29,7 +29,7 @@
           <li>Your chores, cards, and history sync to our servers so your household shares one board.</li>
           <li>You can use Uchi without an email. If you add one, we use it only to sign you in.</li>
           <li>Selfies are used once to draw your character, then discarded. The photo itself is never stored on our servers.</li>
-          <li>We do not sell data, run ads, or use third-party trackers.</li>
+          <li>We do not sell data, run ads, or track you across other companies’ apps and websites.</li>
         </ul>
 
         <h2>What we collect</h2>
@@ -43,12 +43,13 @@
             <tr><td>Cards, completions, and steals</td><td>The core app experience</td><td>Supabase, scoped to your household</td></tr>
             <tr><td>Mascot choice and generated character art</td><td>Rendering your cards</td><td>Supabase Storage</td></tr>
             <tr><td>A selfie, if you choose the selfie character feature</td><td>Sent once to generate cartoon art</td><td>Processed in memory and not stored as the original photo</td></tr>
+            <tr><td>Purchase history, subscription status, and a pseudonymous user ID</td><td>Provide Uchi Pro, restore purchases, prevent fraud, and share access with your current household</td><td>Apple, RevenueCat, and Uchi’s Supabase database</td></tr>
           </tbody>
         </table>
 
         <h2>What we do not do</h2>
         <ul>
-          <li>No ads, analytics SDKs, data brokers, or selling/sharing data for marketing.</li>
+          <li>No ads, data brokers, selling data, or cross-app tracking.</li>
           <li>No reading your contacts, location, or photo library beyond the single image you pick.</li>
           <li>Household data is only visible to members of your household, enforced with database row-level security.</li>
         </ul>
@@ -57,13 +58,15 @@
         <ul>
           <li>Supabase: database, authentication, and file storage.</li>
           <li>Google Gemini API: receives the selfie if you use that feature, and card scene images solely to generate artwork.</li>
-          <li>RevenueCat: manages Uchi Pro product information, purchases, subscription status, and an app-specific customer identifier. RevenueCat does not receive your household chores or selfie.</li>
+          <li>RevenueCat: validates Apple purchases and subscription status using your pseudonymous Uchi user ID. RevenueCat does not receive your Uchi password.</li>
+          <li>Apple: processes App Store payments, refunds, subscription management, and trial eligibility under your Apple Account.</li>
         </ul>
 
         <h2>Your controls</h2>
         <ul>
           <li>Save or stay anonymous: email is optional; anonymous accounts work fully.</li>
           <li>Delete your account: Method tab &rarr; Account &rarr; Delete account.</li>
+          <li>Manage or restore purchases: Profile &rarr; Uchi Pro. Deleting Uchi does not cancel an Apple subscription.</li>
           <li>Invites: invite codes expire and are single-use.</li>
         </ul>
 
