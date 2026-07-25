@@ -883,7 +883,7 @@ a:focus-visible {
   }
 
   h1 {
-    font-size: clamp(63px, 21vw, 96px);
+    font-size: clamp(40px, 11vw, 52px);
   }
 
   .hero-lede {
