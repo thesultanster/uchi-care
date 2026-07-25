@@ -57,6 +57,16 @@ a {
   border-radius: 10px;
 }
 
+.brand small {
+  display: block;
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
 .nav-links {
   display: flex;
   gap: 16px;

@@ -3,78 +3,100 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Privacy Policy | Uchi</title>
-    <meta name="description" content="Uchi privacy policy.">
+    <title>Privacy Policy | Sticky Chores by Uchi</title>
+    <meta name="description" content="How Sticky Chores and the Uchi website handle app data, waitlist emails, and optional ad measurement.">
+    <link rel="canonical" href="https://uchi.care/privacy/">
     <link rel="icon" href="/assets/icon.png">
     <link rel="stylesheet" href="/assets/site.css">
   </head>
   <body>
     <header class="shell nav">
-      <a class="brand" href="/"><img src="/assets/icon.png" alt=""><span>Uchi</span></a>
+      <a class="brand" href="/"><img src="/assets/icon.png" alt=""><span>Sticky Chores <small>by Uchi</small></span></a>
       <nav class="nav-links" aria-label="Main">
+        <a href="/waitlist/">Waitlist</a>
         <a href="/terms/">Terms</a>
-        <a href="/privacy/">Privacy</a>
         <a href="/support/">Support</a>
-        <a href="/join/">Join</a>
       </nav>
     </header>
     <main class="shell page">
-      <span class="eyebrow">Effective July 24, 2026</span>
+      <span class="eyebrow">Effective July 25, 2026</span>
       <h1>Privacy Policy</h1>
       <section class="prose">
-        <p>Uchi is made by Mimis Code. This policy says what we collect, why, and what we never do.</p>
+        <p>Sticky Chores is the customer-facing name of the Uchi app and website, operated by RNA Labs LLC. This policy explains the app and website separately because their marketing data practices are different.</p>
 
         <h2>The short version</h2>
         <ul>
-          <li>Your chores, cards, and history sync to our servers so your household shares one board.</li>
-          <li>You can use Uchi without an email. If you add one, we use it only to sign you in.</li>
-          <li>Selfies are used once to draw your character, then discarded. The photo itself is never stored on our servers.</li>
-          <li>We do not sell data, run ads, or track you across other companies’ apps and websites.</li>
+          <li>The Sticky Chores app does not contain advertising or a Meta tracking SDK.</li>
+          <li>The website waitlist stores the email and optional answer you submit so we can send early-access and product updates.</li>
+          <li>The website records first-party campaign parameters so we can tell which pages and ads produce signups.</li>
+          <li>Meta Pixel and matching conversion events run only after you allow ad measurement.</li>
+          <li>We do not sell personal data.</li>
         </ul>
 
-        <h2>What we collect</h2>
+        <h2>Website and waitlist data</h2>
         <table>
           <thead>
             <tr><th>Data</th><th>Why</th><th>Where it lives</th></tr>
           </thead>
           <tbody>
-            <tr><td>Account, anonymous ID, or email if you add one</td><td>Sign-in and keeping your household attached to you</td><td>Supabase</td></tr>
-            <tr><td>Display name</td><td>Shown on cards and the board to your household</td><td>Supabase</td></tr>
-            <tr><td>Cards, completions, and steals</td><td>The core app experience</td><td>Supabase, scoped to your household</td></tr>
-            <tr><td>Mascot choice and generated character art</td><td>Rendering your cards</td><td>Supabase Storage</td></tr>
-            <tr><td>A selfie, if you choose the selfie character feature</td><td>Sent once to generate cartoon art</td><td>Processed in memory and not stored as the original photo</td></tr>
-            <tr><td>Purchase history, subscription status, and a pseudonymous user ID</td><td>Provide Uchi Pro, restore purchases, prevent fraud, and share access with your current household</td><td>Apple, RevenueCat, and Uchi’s Supabase database</td></tr>
+            <tr><td>Email address and confirmation status</td><td>Manage your waitlist spot and send early-access or product emails</td><td>Supabase and Resend</td></tr>
+            <tr><td>Optional household-friction answer</td><td>Understand which customer problems matter most</td><td>Supabase</td></tr>
+            <tr><td>UTM campaign, campaign/ad IDs, placement, landing variant, and a temporary random session ID</td><td>Measure landing-page, signup, and email-confirmation conversion by campaign</td><td>Supabase</td></tr>
+            <tr><td>Meta browser identifiers, hashed email, IP address, and browser information</td><td>Match a waitlist signup to a Meta ad when you explicitly allow ad measurement</td><td>Sent to Meta; IP and browser information are not retained in our waitlist database</td></tr>
+          </tbody>
+        </table>
+        <p>Waitlist emails use a confirmation step. You can unsubscribe using the link in an email. We retain unsubscribed status so we can honor that choice.</p>
+
+        <h2>Website measurement choices</h2>
+        <p>We use first-party funnel events—such as a landing-page view, form start, signup, and confirmation—to understand whether the website works. These events use a random session identifier and campaign parameters, not the email stored in the marketing-events table.</p>
+        <p>If a Meta Pixel ID is configured, the website asks whether you want to allow ad measurement before loading Meta Pixel. If you allow it, the browser may set Meta cookies and the signup endpoint may send Meta a matching <em>Lead</em> conversion containing a one-way hash of your normalized email and technical matching data. The browser and server use the same event ID so Meta can deduplicate the conversion. Declining does not affect the website or your waitlist spot.</p>
+
+        <h2>App data</h2>
+        <table>
+          <thead>
+            <tr><th>Data</th><th>Why</th><th>Where it lives</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Account, anonymous ID, or sign-in email</td><td>Keep your household attached to you</td><td>Supabase</td></tr>
+            <tr><td>Display name</td><td>Show ownership on cards and the board</td><td>Supabase</td></tr>
+            <tr><td>Cards, completions, and steals</td><td>Provide the shared chore experience</td><td>Supabase, scoped to your household</td></tr>
+            <tr><td>Mascot choice and generated character art</td><td>Render your fighters and cards</td><td>Supabase Storage</td></tr>
+            <tr><td>A selfie, if you choose the selfie character feature</td><td>Generate cartoon art</td><td>Processed in memory; the original photo is not stored</td></tr>
+            <tr><td>Purchase history, subscription status, and pseudonymous user ID</td><td>Provide Sticky Chores Pro, restore purchases, and share access with your current household</td><td>Apple, RevenueCat, and Supabase</td></tr>
           </tbody>
         </table>
 
-        <h2>What we do not do</h2>
+        <h2>Service providers</h2>
         <ul>
-          <li>No ads, data brokers, selling data, or cross-app tracking.</li>
-          <li>No reading your contacts, location, or photo library beyond the single image you pick.</li>
-          <li>Household data is only visible to members of your household, enforced with database row-level security.</li>
+          <li><strong>Supabase</strong>: database, authentication, server functions, and file storage.</li>
+          <li><strong>Resend</strong>: waitlist confirmation, product emails, audience status, and unsubscribe handling.</li>
+          <li><strong>Meta</strong>: optional website ad measurement through Meta Pixel and Conversions API after permission.</li>
+          <li><strong>Google Gemini API</strong>: receives selected images only when you ask the app to generate artwork.</li>
+          <li><strong>RevenueCat and Apple</strong>: subscription status, payments, refunds, and purchase management.</li>
         </ul>
 
-        <h2>Third-party processors</h2>
+        <h2>What we do not do</h2>
         <ul>
-          <li>Supabase: database, authentication, and file storage.</li>
-          <li>Google Gemini API: receives the selfie if you use that feature, and card scene images solely to generate artwork.</li>
-          <li>RevenueCat: validates Apple purchases and subscription status using your pseudonymous Uchi user ID. RevenueCat does not receive your Uchi password.</li>
-          <li>Apple: processes App Store payments, refunds, subscription management, and trial eligibility under your Apple Account.</li>
+          <li>We do not sell personal data or household content.</li>
+          <li>The Sticky Chores app does not display ads or include Meta Pixel.</li>
+          <li>We do not send chore names, household answers, passwords, or private household content to Meta.</li>
+          <li>We do not read contacts, location, or your photo library beyond the image you explicitly choose.</li>
         </ul>
 
         <h2>Your controls</h2>
         <ul>
-          <li>Save or stay anonymous: email is optional; anonymous accounts work fully.</li>
-          <li>Delete your account: Method tab &rarr; Account &rarr; Delete account.</li>
-          <li>Manage or restore purchases: Profile &rarr; Uchi Pro. Deleting Uchi does not cancel an Apple subscription.</li>
-          <li>Invites: invite codes expire and are single-use.</li>
+          <li>Allow or decline Meta ad measurement from the website choice banner.</li>
+          <li>Confirm or ignore a waitlist request; an unconfirmed address is not added to the confirmed mailing audience.</li>
+          <li>Unsubscribe from product emails using the link in an email.</li>
+          <li>Delete your app account from Profile &rarr; Account &rarr; Delete account.</li>
+          <li>Request access, correction, or deletion by contacting us.</li>
         </ul>
 
         <h2>Children</h2>
-        <p>Uchi is not directed at children under 13 and we do not knowingly collect their data.</p>
+        <p>Sticky Chores is not directed at children under 13, and we do not knowingly collect their personal data.</p>
 
         <h2>Changes and contact</h2>
-        <p>We will update this page when the policy changes. Questions: <a href="mailto:gophers.rips-6i@icloud.com">gophers.rips-6i@icloud.com</a>.</p>
+        <p>We will update this page when practices change. Questions or privacy requests: <a href="mailto:gophers.rips-6i@icloud.com">gophers.rips-6i@icloud.com</a>.</p>
       </section>
     </main>
   </body>

@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta
+      name="waitlist-api-base"
+      content="https://ldjcjjywxerjgjvqrcrt.supabase.co/functions/v1"
+    >
+    <title>Waitlist status | Sticky Chores</title>
+    <link rel="icon" href="/assets/icon.png">
+    <link rel="stylesheet" href="/assets/waitlist.css">
+  </head>
+  <body>
+    <main class="thanks-page">
+      <section class="thanks-card" id="confirm" hidden>
+        <div class="stamp" aria-hidden="true">!</div>
+        <h1>Lock it in.</h1>
+        <p>Confirm that you want early access and occasional Sticky Chores updates.</p>
+        <button class="primary-button" id="confirm-action" type="button">Confirm my spot →</button>
+        <p class="form-status" id="confirm-status" role="status" aria-live="polite"></p>
+      </section>
+      <section class="thanks-card" id="unsubscribe" hidden>
+        <div class="stamp" aria-hidden="true">?</div>
+        <h1>Leave the list?</h1>
+        <p>Confirm and we’ll stop sending Sticky Chores waitlist emails.</p>
+        <button class="primary-button" id="unsubscribe-action" type="button">Unsubscribe me</button>
+        <p class="form-status" id="unsubscribe-status" role="status" aria-live="polite"></p>
+      </section>
+      <section class="thanks-card" id="confirmed" hidden>
+        <div class="stamp" aria-hidden="true">済</div>
+        <h1>You’re in.</h1>
+        <p>Your Sticky Chores waitlist spot is confirmed. Watch your inbox for the next early-access issue.</p>
+        <a class="text-link" href="/">See Sticky Chores →</a>
+      </section>
+      <section class="thanks-card" id="unsubscribed" hidden>
+        <div class="stamp" aria-hidden="true">✓</div>
+        <h1>Unsubscribed.</h1>
+        <p>You won’t receive more Sticky Chores waitlist emails. Your choice has been saved.</p>
+        <a class="text-link" href="/">Return home →</a>
+      </section>
+      <section class="thanks-card" id="invalid" hidden>
+        <div class="stamp" aria-hidden="true">?</div>
+        <h1>That link expired.</h1>
+        <p>Join the waitlist again to receive a fresh confirmation link.</p>
+        <a class="text-link" href="/waitlist/">Return to the waitlist →</a>
+      </section>
+    </main>
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const state = params.get('state');
+      const token = params.get('token');
+      const validAction = (state === 'confirm' || state === 'unsubscribe') && token?.length >= 32;
+      const initialState = validAction || state === 'confirmed' || state === 'unsubscribed'
+        ? state
+        : 'invalid';
+      document.getElementById(initialState).hidden = false;
+
+      if (token) {
+        history.replaceState({}, '', `${window.location.pathname}?state=${initialState}`);
+      }
+
+      const configuredApiBase =
+        document.querySelector('meta[name="waitlist-api-base"]')?.content.replace(/\/$/, '') ?? '';
+      const apiBase =
+        window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
+          ? 'http://127.0.0.1:54421/functions/v1'
+          : configuredApiBase;
+
+      async function submitAction(action, successState) {
+        const button = document.getElementById(`${action}-action`);
+        const status = document.getElementById(`${action}-status`);
+        button.disabled = true;
+        status.className = 'form-status';
+        status.textContent = action === 'confirm' ? 'Confirming…' : 'Updating…';
+        try {
+          const response = await fetch(`${apiBase}/waitlist-${action}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token }),
+          });
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(result.error || 'This link could not be used.');
+          document.getElementById(action).hidden = true;
+          document.getElementById(successState).hidden = false;
+          history.replaceState({}, '', `${window.location.pathname}?state=${successState}`);
+        } catch (error) {
+          status.classList.add('is-error');
+          status.textContent = error.message || 'This link could not be used.';
+          button.disabled = false;
+        }
+      }
+
+      document.getElementById('confirm-action').addEventListener('click', () => {
+        submitAction('confirm', 'confirmed');
+      });
+      document.getElementById('unsubscribe-action').addEventListener('click', () => {
+        submitAction('unsubscribe', 'unsubscribed');
+      });
+    </script>
+  </body>
+</html>
