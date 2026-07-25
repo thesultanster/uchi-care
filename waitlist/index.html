@@ -40,22 +40,17 @@
     <main id="main">
       <section class="shell hero">
         <div class="hero-copy">
-          <h1>Fight chores.<br><span class="strike">Not each other.</span></h1>
-          <p class="hero-lede">
-            Sticky Chores turns the work around your home into <strong>collectible manga cards</strong>,
-            shared quests, and receipts you can both trust. Less reminding. Less scorekeeping.
-            More satisfying clears.
-          </p>
+          <h1>Fight chores<br><span class="strike">Not each other</span></h1>
 
           <form class="waitlist-card amp-block" id="waitlist-form" novalidate>
             <div class="form-row">
               <div class="field">
-                <label for="waitlist-email">Email for early access</label>
+                <label class="visually-hidden" for="waitlist-email">Email for early access</label>
                 <input id="waitlist-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required>
               </div>
               <button class="primary-button" type="submit">Join the waitlist →</button>
             </div>
-            <div class="field">
+            <div class="field" hidden>
               <label for="pain-point">What gets sticky at home? <span aria-hidden="true">·</span> Optional</label>
               <select id="pain-point" name="painPoint">
                 <option value="">Choose one</option>
@@ -70,13 +65,13 @@
               <label for="company">Company</label>
               <input id="company" name="company" type="text" tabindex="-1" autocomplete="off">
             </div>
-            <p class="form-fineprint">
-              iPhone first. Early-access and product emails from Sticky Chores by Uchi.
-              You can turn website measurement off through Privacy choices. Unsubscribe anytime.
-              <a href="/privacy/">Privacy</a>.
-            </p>
             <p class="form-status" id="form-status" aria-live="polite"></p>
           </form>
+
+          <a class="learn-more-link" href="#learn-more">
+            <span class="learn-more-arrow" aria-hidden="true">↓</span>
+            <strong>Learn more</strong>
+          </a>
         </div>
 
         <div class="hero-art">
@@ -93,6 +88,22 @@
             </figcaption>
             <div class="coop-stamp" aria-hidden="true">QUEST<br>CLEAR!</div>
           </figure>
+        </div>
+      </section>
+
+      <section class="product-intro" id="learn-more">
+        <div class="shell product-intro-inner">
+          <p class="chapter">What Sticky Chores is</p>
+          <p class="hero-lede">
+            Sticky Chores turns the work around your home into <strong>collectible manga cards</strong>,
+            shared quests, and receipts you can both trust. Less reminding. Less scorekeeping.
+            More satisfying clears.
+          </p>
+          <p class="form-fineprint">
+            iPhone first. Early-access and product emails from Sticky Chores by Uchi.
+            You can turn website measurement off through Privacy choices. Unsubscribe anytime.
+            <a href="/privacy/">Privacy</a>.
+          </p>
         </div>
       </section>
 
