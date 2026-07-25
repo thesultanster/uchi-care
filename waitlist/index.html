@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="/assets/waitlist.css">
     <script type="module" src="/assets/waitlist.js"></script>
   </head>
-  <body data-landing-variant="manga-couples-coop-v2">
+  <body data-landing-variant="manga-couples-coop-v3-us-optout">
     <a class="skip-link" href="#main">Skip to content</a>
 
     <header class="shell topbar">
@@ -71,7 +71,7 @@
             </div>
             <p class="form-fineprint">
               iPhone first. Early-access and product emails from Sticky Chores by Uchi.
-              We measure which ads work only with your permission. Unsubscribe anytime.
+              You can turn ad measurement off through Privacy choices. Unsubscribe anytime.
               <a href="/privacy/">Privacy</a>.
             </p>
             <p class="form-status" id="form-status" aria-live="polite"></p>
@@ -229,20 +229,28 @@
           <a href="/support/">Support</a>
           <a href="/terms/">Terms</a>
           <a href="/privacy/">Privacy</a>
+          <button
+            class="footer-link-button"
+            id="privacy-choices-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="privacy-choices-panel"
+          >Privacy choices</button>
         </nav>
       </div>
-    </footer>
-
-    <aside class="consent-banner" id="measurement-consent" hidden aria-label="Ad measurement choices">
-      <strong>Help us learn which ads work?</strong>
+      <div class="shell privacy-choices-panel" id="privacy-choices-panel" hidden>
+        <strong>Ad measurement</strong>
+        <p id="measurement-status"></p>
       <p>
-        With your permission, we use Meta Pixel and matching conversion events to understand which
-        ads lead to waitlist signups. Declining does not affect the site or your spot.
+          We use Meta Pixel and matching conversion events on this U.S.-focused waitlist to
+          understand which ads produce signups. See our <a href="/privacy/">Privacy Policy</a>.
       </p>
-      <div class="consent-actions">
-        <button class="accept" id="accept-measurement" type="button">Allow measurement</button>
-        <button id="decline-measurement" type="button">No thanks</button>
+        <div class="privacy-choice-actions">
+          <button id="enable-measurement" type="button">Allow measurement</button>
+          <button id="disable-measurement" type="button">Turn off measurement</button>
+          <button id="close-privacy-choices" type="button">Close</button>
+        </div>
       </div>
-    </aside>
+    </footer>
   </body>
 </html>

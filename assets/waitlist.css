@@ -736,53 +736,62 @@ a:focus-visible {
   gap: 16px;
 }
 
-.footer-grid a {
+.footer-grid a,
+.footer-link-button {
+  color: inherit;
+  font: inherit;
   text-underline-offset: 3px;
 }
 
-.consent-banner {
-  position: fixed;
-  z-index: 50;
-  right: 18px;
-  bottom: 18px;
-  width: min(440px, calc(100% - 36px));
-  padding: 18px;
-  border: 3px solid var(--sumi);
-  background: var(--white);
-  box-shadow: 7px 7px 0 var(--sumi);
+.footer-link-button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  text-decoration: underline;
 }
 
-.consent-banner[hidden] {
+.privacy-choices-panel[hidden] {
   display: none;
 }
 
-.consent-banner strong {
+.privacy-choices-panel {
+  margin-top: 24px;
+  padding-top: 22px;
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.privacy-choices-panel strong {
   display: block;
   font-size: 16px;
 }
 
-.consent-banner p {
-  margin: 7px 0 14px;
-  color: var(--sumi-soft);
+.privacy-choices-panel p {
+  max-width: 720px;
+  margin: 7px 0 0;
+  color: #d8d8dd;
   font-size: 13px;
 }
 
-.consent-actions {
+.privacy-choice-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
+  margin-top: 14px;
 }
 
-.consent-actions button {
+.privacy-choice-actions button {
   padding: 9px 12px;
-  border: 2px solid var(--sumi);
-  background: white;
+  border: 2px solid white;
+  background: transparent;
+  color: white;
   cursor: pointer;
   font-weight: 800;
 }
 
-.consent-actions .accept {
-  background: var(--sumi);
-  color: white;
+.privacy-choice-actions button:hover {
+  background: white;
+  color: var(--sumi);
 }
 
 .thanks-page {
@@ -1006,11 +1015,6 @@ a:focus-visible {
     padding: 72px 0;
   }
 
-  .consent-banner {
-    right: 12px;
-    bottom: 12px;
-    width: calc(100% - 24px);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

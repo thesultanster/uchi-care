@@ -50,3 +50,10 @@ export function buildMetaClickCookie(clickId, nowMs = Date.now()) {
   }
   return `fb.1.${Math.floor(nowMs / 1000)}.${clickId}`;
 }
+
+export function adMeasurementAllowed({
+  preference = null,
+  globalPrivacyControl = false,
+} = {}) {
+  return globalPrivacyControl !== true && preference !== 'declined';
+}

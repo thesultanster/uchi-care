@@ -1,4 +1,5 @@
 import {
+  adMeasurementAllowed,
   attributionFromSearch,
   buildMetaClickCookie,
   normalizeClientEmail,
@@ -112,7 +113,10 @@ function consentState() {
 }
 
 function hasAdMeasurementConsent() {
-  return consentState() === 'accepted';
+  return adMeasurementAllowed({
+    preference: consentState(),
+    globalPrivacyControl: navigator.globalPrivacyControl === true,
+  });
 }
 
 function loadMetaPixel() {
@@ -136,25 +140,67 @@ function loadMetaPixel() {
   fbq('track', 'PageView');
 }
 
-const consentBanner = document.getElementById('measurement-consent');
-const acceptMeasurement = document.getElementById('accept-measurement');
-const declineMeasurement = document.getElementById('decline-measurement');
-
-if (META_PIXEL_ID) {
-  if (hasAdMeasurementConsent()) loadMetaPixel();
-  if (!consentState()) consentBanner?.removeAttribute('hidden');
+function clearMetaMeasurementCookies() {
+  for (const name of ['_fbp', '_fbc']) {
+    document.cookie = `${name}=; Max-Age=0; path=/; SameSite=Lax`;
+  }
 }
 
-acceptMeasurement?.addEventListener('click', () => {
-  safeStorage(localStorage, 'set', CONSENT_KEY, 'accepted');
-  consentBanner?.setAttribute('hidden', '');
-  loadMetaPixel();
+const privacyChoicesToggle = document.getElementById('privacy-choices-toggle');
+const privacyChoicesPanel = document.getElementById('privacy-choices-panel');
+const measurementStatus = document.getElementById('measurement-status');
+const enableMeasurement = document.getElementById('enable-measurement');
+const disableMeasurement = document.getElementById('disable-measurement');
+const closePrivacyChoices = document.getElementById('close-privacy-choices');
+
+function updatePrivacyChoices() {
+  const blockedByGpc = navigator.globalPrivacyControl === true;
+  const allowed = hasAdMeasurementConsent();
+  if (measurementStatus) {
+    measurementStatus.textContent = blockedByGpc
+      ? 'Meta ad measurement is off because your browser sent Global Privacy Control.'
+      : allowed
+        ? 'Meta ad measurement is on. You can turn it off without affecting your waitlist spot.'
+        : 'Meta ad measurement is off. You can turn it back on at any time.';
+  }
+  enableMeasurement?.toggleAttribute('hidden', allowed || blockedByGpc);
+  disableMeasurement?.toggleAttribute('hidden', !allowed || blockedByGpc);
+}
+
+function closePrivacyPanel() {
+  privacyChoicesPanel?.setAttribute('hidden', '');
+  privacyChoicesToggle?.setAttribute('aria-expanded', 'false');
+}
+
+if (META_PIXEL_ID && hasAdMeasurementConsent()) loadMetaPixel();
+updatePrivacyChoices();
+
+privacyChoicesToggle?.addEventListener('click', () => {
+  const willOpen = privacyChoicesPanel?.hasAttribute('hidden') ?? false;
+  privacyChoicesPanel?.toggleAttribute('hidden', !willOpen);
+  privacyChoicesToggle.setAttribute('aria-expanded', String(willOpen));
+  if (willOpen) updatePrivacyChoices();
 });
 
-declineMeasurement?.addEventListener('click', () => {
-  safeStorage(localStorage, 'set', CONSENT_KEY, 'declined');
-  consentBanner?.setAttribute('hidden', '');
+enableMeasurement?.addEventListener('click', () => {
+  safeStorage(localStorage, 'set', CONSENT_KEY, 'accepted');
+  if (window.fbq) {
+    window.fbq('consent', 'grant');
+    window.fbq('track', 'PageView');
+  } else {
+    loadMetaPixel();
+  }
+  updatePrivacyChoices();
 });
+
+disableMeasurement?.addEventListener('click', () => {
+  safeStorage(localStorage, 'set', CONSENT_KEY, 'declined');
+  window.fbq?.('consent', 'revoke');
+  clearMetaMeasurementCookies();
+  updatePrivacyChoices();
+});
+
+closePrivacyChoices?.addEventListener('click', closePrivacyPanel);
 
 const form = document.getElementById('waitlist-form');
 const emailInput = form?.elements.namedItem('email');
