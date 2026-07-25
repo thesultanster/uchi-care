@@ -176,6 +176,13 @@ h1 .strike {
   position: relative;
   max-width: 600px;
   margin-top: 30px;
+  padding: 18px;
+  border: 3px solid var(--sumi);
+  background: var(--white);
+  box-shadow: var(--shadow);
+}
+
+.hero-copy .waitlist-card {
   padding: 0;
   border: 0;
   background: transparent;
