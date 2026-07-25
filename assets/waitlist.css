@@ -104,15 +104,7 @@ select {
 }
 
 .wordmark span {
-  font-size: 19px;
-}
-
-.wordmark small {
-  display: block;
-  color: var(--sumi-soft);
-  font: 700 10px/1.2 var(--utility);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 24px;
 }
 
 .topbar-nav {
@@ -135,29 +127,6 @@ select {
   align-items: center;
   min-height: 720px;
   padding: 44px 0 84px;
-}
-
-.kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0 0 18px;
-  padding: 8px 11px;
-  border: 2px solid var(--sumi);
-  background: var(--yellow);
-  box-shadow: 3px 3px 0 var(--sumi);
-  font: 900 12px/1 var(--utility);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  transform: rotate(-1deg);
-}
-
-.kicker::before {
-  content: "NEW";
-  padding: 4px 6px;
-  background: var(--sumi);
-  color: white;
-  letter-spacing: 0.04em;
 }
 
 h1,
