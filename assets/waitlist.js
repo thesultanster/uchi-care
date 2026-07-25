@@ -1,5 +1,6 @@
 import {
   adMeasurementAllowed,
+  analyticsEventProperties,
   attributionFromSearch,
   buildMetaClickCookie,
   normalizeClientEmail,
@@ -7,17 +8,29 @@ import {
 
 const configuredApiBase =
   document.querySelector('meta[name="waitlist-api-base"]')?.content.replace(/\/$/, '') ?? '';
+const IS_LOCALHOST =
+  window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
 const API_BASE =
-  window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
+  IS_LOCALHOST
     ? 'http://127.0.0.1:54421/functions/v1'
     : configuredApiBase;
 const META_PIXEL_ID =
   document.querySelector('meta[name="meta-pixel-id"]')?.content.trim() ?? '';
+const AMPLITUDE_API_KEY =
+  document.querySelector('meta[name="amplitude-api-key"]')?.content.trim() ?? '';
 const LANDING_VARIANT = document.body.dataset.landingVariant || 'manga-couples-v1';
 const CONSENT_KEY = 'sticky_chores_ad_measurement';
 const ATTRIBUTION_KEY = 'sticky_chores_session_attribution';
 const SESSION_KEY = 'sticky_chores_marketing_session';
 const search = new URLSearchParams(window.location.search);
+const AMPLITUDE_EVENT_NAMES = {
+  landing_view: 'Landing Viewed',
+  form_start: 'Waitlist Form Started',
+};
+let amplitudeReadyPromise;
+let amplitudeInitialized = false;
+let amplitudeReplayPlugin;
+let amplitudeReplayAdded = false;
 
 function safeStorage(storage, operation, key, value) {
   try {
@@ -78,7 +91,132 @@ async function postJson(path, payload, { keepalive = false } = {}) {
   }
 }
 
+function loadExternalScript(source, marker) {
+  return new Promise((resolve, reject) => {
+    const existingScript = document.querySelector(`script[${marker}]`);
+    if (existingScript) {
+      existingScript.addEventListener('load', resolve, { once: true });
+      existingScript.addEventListener('error', reject, { once: true });
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.async = true;
+    script.crossOrigin = 'anonymous';
+    script.setAttribute(marker, 'true');
+    script.src = source;
+    script.addEventListener('load', resolve, { once: true });
+    script.addEventListener('error', reject, { once: true });
+    document.head.append(script);
+  });
+}
+
+async function loadAmplitudeScript() {
+  if (!window.amplitude) {
+    await loadExternalScript(
+      'https://cdn.amplitude.com/libs/analytics-browser-2.44.4-min.js.gz',
+      'data-amplitude-analytics-loader',
+    );
+  }
+  if (!window.sessionReplay) {
+    await loadExternalScript(
+      'https://cdn.amplitude.com/libs/plugin-session-replay-browser-1.33.0-min.js.gz',
+      'data-amplitude-replay-loader',
+    );
+  }
+}
+
+async function addAmplitudeReplay() {
+  if (!window.sessionReplay || amplitudeReplayAdded) return;
+  amplitudeReplayPlugin ||= window.sessionReplay.plugin({
+    sampleRate: 1,
+    privacyConfig: {
+      blockSelector: ['#waitlist-form', '#waitlist-form-secondary'],
+      defaultMaskLevel: 'light',
+      maskSelector: ['.form-status'],
+    },
+  });
+  await window.amplitude.add(amplitudeReplayPlugin).promise;
+  amplitudeReplayAdded = true;
+}
+
+async function enableAmplitudeMeasurement() {
+  if (!AMPLITUDE_API_KEY || !hasAdMeasurementConsent()) return null;
+
+  if (amplitudeInitialized) {
+    window.amplitude.setOptOut(false);
+    await addAmplitudeReplay();
+    return window.amplitude;
+  }
+
+  amplitudeReadyPromise ||= (async () => {
+    await loadAmplitudeScript();
+    if (!hasAdMeasurementConsent() || !window.amplitude) return null;
+
+    await addAmplitudeReplay();
+    await window.amplitude.init(AMPLITUDE_API_KEY, {
+      fetchRemoteConfig: false,
+      autocapture: {
+        attribution: false,
+        fileDownloads: false,
+        formInteractions: false,
+        pageViews: false,
+        sessions: true,
+        elementInteractions: true,
+        networkTracking: false,
+        pageUrlEnrichment: false,
+        webVitals: false,
+        frustrationInteractions: true,
+      },
+      trackingOptions: {
+        ipAddress: false,
+      },
+    }).promise;
+    window.amplitude.setOptOut(false);
+    amplitudeInitialized = true;
+    return window.amplitude;
+  })().catch(() => {
+    amplitudeReadyPromise = undefined;
+    return null;
+  });
+
+  const amplitude = await amplitudeReadyPromise;
+  if (!amplitude) amplitudeReadyPromise = undefined;
+  return amplitude;
+}
+
+async function disableAmplitudeMeasurement() {
+  if (!window.amplitude) return;
+  window.amplitude.setOptOut(true);
+  if (!amplitudeReplayPlugin || !amplitudeReplayAdded) return;
+
+  try {
+    await window.amplitude.remove(amplitudeReplayPlugin.name).promise;
+    amplitudeReplayAdded = false;
+  } catch {
+    // Analytics opt-out is already active; replay cleanup can retry next load.
+  }
+}
+
+function trackAmplitudeEvent(eventName, additionalProperties = {}) {
+  if (!hasAdMeasurementConsent()) return;
+  const properties = {
+    ...analyticsEventProperties({
+      sessionId,
+      attribution,
+      landingVariant: LANDING_VARIANT,
+      pagePath: window.location.pathname,
+    }),
+    ...additionalProperties,
+  };
+
+  void enableAmplitudeMeasurement().then((amplitude) => {
+    amplitude?.track(AMPLITUDE_EVENT_NAMES[eventName] || eventName, properties);
+  });
+}
+
 export function trackCustomEvent(eventName) {
+  trackAmplitudeEvent(eventName);
   return postJson(
     'marketing-event',
     {
@@ -120,7 +258,7 @@ function hasAdMeasurementConsent() {
 }
 
 function loadMetaPixel() {
-  if (!META_PIXEL_ID || window.fbq) return;
+  if (IS_LOCALHOST || !META_PIXEL_ID || window.fbq) return;
   const fbq = function (...args) {
     if (fbq.callMethod) fbq.callMethod(...args);
     else fbq.queue.push(args);
@@ -158,10 +296,10 @@ function updatePrivacyChoices() {
   const allowed = hasAdMeasurementConsent();
   if (measurementStatus) {
     measurementStatus.textContent = blockedByGpc
-      ? 'Meta ad measurement is off because your browser sent Global Privacy Control.'
+      ? 'Website measurement is off because your browser sent Global Privacy Control.'
       : allowed
-        ? 'Meta ad measurement is on. You can turn it off without affecting your waitlist spot.'
-        : 'Meta ad measurement is off. You can turn it back on at any time.';
+        ? 'Amplitude analytics and replay plus Meta ad measurement are on. You can turn them off without affecting your waitlist spot.'
+        : 'Amplitude analytics and replay plus Meta ad measurement are off. You can turn them back on at any time.';
   }
   enableMeasurement?.toggleAttribute('hidden', allowed || blockedByGpc);
   disableMeasurement?.toggleAttribute('hidden', !allowed || blockedByGpc);
@@ -172,7 +310,10 @@ function closePrivacyPanel() {
   privacyChoicesToggle?.setAttribute('aria-expanded', 'false');
 }
 
-if (META_PIXEL_ID && hasAdMeasurementConsent()) loadMetaPixel();
+if (hasAdMeasurementConsent()) {
+  if (!IS_LOCALHOST && META_PIXEL_ID) loadMetaPixel();
+  void enableAmplitudeMeasurement();
+}
 updatePrivacyChoices();
 
 privacyChoicesToggle?.addEventListener('click', () => {
@@ -190,6 +331,7 @@ enableMeasurement?.addEventListener('click', () => {
   } else {
     loadMetaPixel();
   }
+  void enableAmplitudeMeasurement();
   updatePrivacyChoices();
 });
 
@@ -197,6 +339,7 @@ disableMeasurement?.addEventListener('click', () => {
   safeStorage(localStorage, 'set', CONSENT_KEY, 'declined');
   window.fbq?.('consent', 'revoke');
   clearMetaMeasurementCookies();
+  void disableAmplitudeMeasurement();
   updatePrivacyChoices();
 });
 
@@ -254,6 +397,10 @@ form?.addEventListener('submit', async (event) => {
     if (result.isNewLead && adConsent && window.fbq) {
       window.fbq('track', 'Lead', {}, { eventID: result.eventId });
     }
+    trackAmplitudeEvent('Waitlist Submitted', {
+      email_delivery: result.emailDelivery === 'delayed' ? 'delayed' : 'sent',
+      is_new_lead: result.isNewLead === true,
+    });
 
     form.classList.add('is-complete');
     formStatus.classList.add('is-success');

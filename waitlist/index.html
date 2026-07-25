@@ -16,6 +16,8 @@
     <meta name="waitlist-api-base" content="https://ldjcjjywxerjgjvqrcrt.supabase.co/functions/v1">
     <!-- Public identifier only. Add the Meta Pixel dataset ID here after Events Manager setup. -->
     <meta name="meta-pixel-id" content="4538451973065307">
+    <!-- Public browser SDK identifier. Sensitive form content is blocked from Session Replay. -->
+    <meta name="amplitude-api-key" content="a91837e83a513113d378cbd6c604a576">
     <link rel="icon" href="/assets/icon.png">
     <link rel="stylesheet" href="/assets/waitlist.css">
     <script type="module" src="/assets/waitlist.js"></script>
@@ -46,7 +48,7 @@
             More satisfying clears.
           </p>
 
-          <form class="waitlist-card" id="waitlist-form" novalidate>
+          <form class="waitlist-card amp-block" id="waitlist-form" novalidate>
             <div class="form-row">
               <div class="field">
                 <label for="waitlist-email">Email for early access</label>
@@ -71,7 +73,7 @@
             </div>
             <p class="form-fineprint">
               iPhone first. Early-access and product emails from Sticky Chores by Uchi.
-              You can turn ad measurement off through Privacy choices. Unsubscribe anytime.
+              You can turn website measurement off through Privacy choices. Unsubscribe anytime.
               <a href="/privacy/">Privacy</a>.
             </p>
             <p class="form-status" id="form-status" aria-live="polite"></p>
@@ -212,7 +214,7 @@
             <p class="chapter">Next issue · Your house</p>
             <h2>Be first to deal the deck.</h2>
           </div>
-          <form class="waitlist-card" id="waitlist-form-secondary" onsubmit="document.getElementById('waitlist-email').focus(); document.getElementById('waitlist-form').scrollIntoView({behavior:'smooth',block:'center'}); return false;">
+          <form class="waitlist-card amp-block" id="waitlist-form-secondary" onsubmit="document.getElementById('waitlist-email').focus(); document.getElementById('waitlist-form').scrollIntoView({behavior:'smooth',block:'center'}); return false;">
             <p><strong>Sticky Chores is opening on iPhone first.</strong></p>
             <button class="primary-button" type="submit">Join the early-access waitlist ↑</button>
           </form>
@@ -239,11 +241,12 @@
         </nav>
       </div>
       <div class="shell privacy-choices-panel" id="privacy-choices-panel" hidden>
-        <strong>Ad measurement</strong>
+        <strong>Website measurement</strong>
         <p id="measurement-status"></p>
       <p>
-          We use Meta Pixel and matching conversion events on this U.S.-focused waitlist to
-          understand which ads produce signups. See our <a href="/privacy/">Privacy Policy</a>.
+          We use privacy-masked Amplitude analytics and Session Replay plus Meta ad measurement
+          on this U.S.-focused waitlist to understand which experiences produce signups. The
+          waitlist form is blocked from recordings. See our <a href="/privacy/">Privacy Policy</a>.
       </p>
         <div class="privacy-choice-actions">
           <button id="enable-measurement" type="button">Allow measurement</button>

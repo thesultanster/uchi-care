@@ -57,3 +57,49 @@ export function adMeasurementAllowed({
 } = {}) {
   return globalPrivacyControl !== true && preference !== 'declined';
 }
+
+const ANALYTICS_ATTRIBUTION_KEYS = {
+  source: 'utm_source',
+  medium: 'utm_medium',
+  campaign: 'utm_campaign',
+  content: 'utm_content',
+  term: 'utm_term',
+  campaignId: 'campaign_id',
+  adsetId: 'adset_id',
+  adId: 'ad_id',
+  placement: 'placement',
+};
+
+export function analyticsTrafficClass(attribution = {}) {
+  const source = clean(attribution?.source)?.toLowerCase();
+  const medium = clean(attribution?.medium)?.toLowerCase();
+
+  if (source === 'meta' && medium === 'paid_social') return 'paid_meta';
+  if (Object.values(attribution).some((value) => clean(value) !== null)) {
+    return 'other_tagged';
+  }
+  return 'direct_or_unattributed';
+}
+
+export function analyticsEventProperties({
+  sessionId,
+  attribution = {},
+  landingVariant,
+  pagePath,
+} = {}) {
+  const properties = {
+    marketing_session_id: clean(sessionId, 64),
+    landing_variant: clean(landingVariant, 80),
+    page_path: clean(pagePath, 160),
+    traffic_class: analyticsTrafficClass(attribution),
+  };
+
+  for (const [inputKey, outputKey] of Object.entries(ANALYTICS_ATTRIBUTION_KEYS)) {
+    const value = clean(attribution?.[inputKey]);
+    if (value) properties[outputKey] = value;
+  }
+
+  return Object.fromEntries(
+    Object.entries(properties).filter(([, value]) => value !== null),
+  );
+}

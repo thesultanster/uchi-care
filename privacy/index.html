@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Privacy Policy | Sticky Chores by Uchi</title>
-    <meta name="description" content="How Sticky Chores and the Uchi website handle app data, waitlist emails, and optional ad measurement.">
+    <meta name="description" content="How Sticky Chores and the Uchi website handle app data, waitlist emails, and optional website measurement.">
     <link rel="canonical" href="https://uchi.care/privacy/">
     <link rel="icon" href="/assets/icon.png">
     <link rel="stylesheet" href="/assets/site.css">
@@ -29,7 +29,7 @@
           <li>The Sticky Chores app does not contain advertising or a Meta tracking SDK.</li>
           <li>The website waitlist stores the email and optional answer you submit so we can send early-access and product updates.</li>
           <li>The website records first-party campaign parameters so we can tell which pages and ads produce signups.</li>
-          <li>On the U.S.-focused waitlist, Meta Pixel and matching conversion events run unless you opt out or your browser sends Global Privacy Control.</li>
+          <li>On the U.S.-focused waitlist, privacy-masked Amplitude analytics and Session Replay plus Meta ad measurement run unless you opt out or your browser sends Global Privacy Control.</li>
           <li>We do not sell personal data.</li>
         </ul>
 
@@ -43,13 +43,15 @@
             <tr><td>Optional household-friction answer</td><td>Understand which customer problems matter most</td><td>Supabase</td></tr>
             <tr><td>UTM campaign, campaign/ad IDs, placement, landing variant, and a temporary random session ID</td><td>Measure landing-page, signup, and email-confirmation conversion by campaign</td><td>Supabase</td></tr>
             <tr><td>Meta browser identifiers, hashed email, IP address, and browser information</td><td>Match a waitlist signup to a Meta ad unless you opt out or use Global Privacy Control</td><td>Sent to Meta; IP and browser information are not retained in our waitlist database</td></tr>
+            <tr><td>Pseudonymous device/session identifiers, page path, campaign parameters, clicks, scrolls, and masked page playback</td><td>Understand whether visitors see and use the important parts of the waitlist page</td><td>Amplitude; the waitlist form is blocked from Session Replay, and email or optional answers are not sent</td></tr>
           </tbody>
         </table>
         <p>Waitlist emails use a confirmation step. You can unsubscribe using the link in an email. We retain unsubscribed status so we can honor that choice.</p>
 
         <h2>Website measurement choices</h2>
         <p>We use first-party funnel events—such as a landing-page view, form start, signup, and confirmation—to understand whether the website works. These events use a random session identifier and campaign parameters, not the email stored in the marketing-events table.</p>
-        <p>On the U.S.-focused waitlist, Meta Pixel may load by default and set Meta measurement cookies. When you submit the form, the signup endpoint may send Meta a matching <em>Lead</em> conversion containing a one-way hash of your normalized email and technical matching data. The browser and server use the same event ID so Meta can deduplicate the conversion. You can turn Meta measurement off at any time through <em>Privacy choices</em> in the website footer. We also honor a browser Global Privacy Control signal. Opting out does not affect the website or your waitlist spot.</p>
+        <p>Amplitude records pseudonymous analytics events and a privacy-masked reconstruction of page activity, including clicks, scrolling, and which public sections appeared on screen. Text inputs are masked by default, and we additionally block the entire waitlist form from Session Replay. We do not set an Amplitude user ID or send the email address or optional household-friction answer to Amplitude.</p>
+        <p>Meta Pixel may load by default and set Meta measurement cookies. When you submit the form, the signup endpoint may send Meta a matching <em>Lead</em> conversion containing a one-way hash of your normalized email and technical matching data. The browser and server use the same event ID so Meta can deduplicate the conversion. You can turn Amplitude and Meta measurement off at any time through <em>Privacy choices</em> in the website footer. We also honor a browser Global Privacy Control signal. Opting out does not affect the website or your waitlist spot.</p>
 
         <h2>App data</h2>
         <table>
@@ -70,6 +72,7 @@
         <ul>
           <li><strong>Supabase</strong>: database, authentication, server functions, and file storage.</li>
           <li><strong>Resend</strong>: waitlist confirmation, product emails, audience status, and unsubscribe handling.</li>
+          <li><strong>Amplitude</strong>: pseudonymous website analytics and privacy-masked Session Replay unless you opt out or use Global Privacy Control.</li>
           <li><strong>Meta</strong>: website ad measurement through Meta Pixel and Conversions API unless you opt out or use Global Privacy Control.</li>
           <li><strong>Google Gemini API</strong>: receives selected images only when you ask the app to generate artwork.</li>
           <li><strong>RevenueCat and Apple</strong>: subscription status, payments, refunds, and purchase management.</li>
@@ -80,12 +83,13 @@
           <li>We do not sell personal data or household content.</li>
           <li>The Sticky Chores app does not display ads or include Meta Pixel.</li>
           <li>We do not send chore names, household answers, passwords, or private household content to Meta.</li>
+          <li>We do not send waitlist email addresses, optional household answers, or form contents to Amplitude.</li>
           <li>We do not read contacts, location, or your photo library beyond the image you explicitly choose.</li>
         </ul>
 
         <h2>Your controls</h2>
         <ul>
-          <li>Turn Meta ad measurement on or off through <em>Privacy choices</em> in the website footer.</li>
+          <li>Turn Amplitude analytics and Session Replay plus Meta ad measurement on or off through <em>Privacy choices</em> in the website footer.</li>
           <li>Use a browser that sends Global Privacy Control to opt out automatically.</li>
           <li>Confirm or ignore a waitlist request; an unconfirmed address is not added to the confirmed mailing audience.</li>
           <li>Unsubscribe from product emails using the link in an email.</li>
