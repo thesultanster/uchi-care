@@ -39,6 +39,7 @@ let amplitudeReplayAdded = false;
 
 function mountScenePlayer(root) {
   const scenes = [...root.querySelectorAll('[data-scene]')];
+  const sceneVideos = [...root.querySelectorAll('[data-scene-video]')];
   const fittedCards = [...root.querySelectorAll('[data-scene-fit-height]')];
   const toggle = root.querySelector('[data-scene-toggle]');
   const toggleLabel = root.querySelector('[data-scene-toggle-label]');
@@ -104,6 +105,39 @@ function mountScenePlayer(root) {
     toggleLabel.textContent = paused ? 'Play animation' : 'Pause animation';
   }
 
+  function syncSceneVideos({ restartActive = false } = {}) {
+    sceneVideos.forEach((video) => {
+      const isActive = video.closest('[data-scene]') === scenes[activeIndex];
+
+      if (!isActive) {
+        video.pause();
+        try {
+          video.currentTime = 0;
+        } catch {
+          // The poster remains visible until enough metadata is available.
+        }
+        return;
+      }
+
+      if (restartActive) {
+        try {
+          video.currentTime = 0;
+        } catch {
+          // Playing from the poster is the correct fallback before metadata loads.
+        }
+      }
+
+      if (!canAutoplay()) {
+        video.pause();
+        return;
+      }
+
+      video.play()?.catch(() => {
+        // iOS or data-saving policies can decline autoplay; the poster remains usable.
+      });
+    });
+  }
+
   function activateScene(nextIndex, reason = 'autoplay') {
     const previousIndex = activeIndex;
     const isReplay = nextIndex === activeIndex && reason !== 'init';
@@ -125,6 +159,9 @@ function mountScenePlayer(root) {
     );
     root.dataset.activeScene = String(activeIndex + 1);
     root.style.setProperty('--scene-duration', `${duration}ms`);
+    syncSceneVideos({
+      restartActive: isReplay || previousIndex !== activeIndex || reason === 'init',
+    });
     root.dispatchEvent(
       new CustomEvent('sticky-chores:scenechange', {
         detail: {
@@ -157,6 +194,7 @@ function mountScenePlayer(root) {
 
   function syncPlayback() {
     updateToggle();
+    syncSceneVideos();
     scheduleNextScene();
   }
 

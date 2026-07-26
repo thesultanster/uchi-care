@@ -1006,7 +1006,7 @@ h1 .strike {
   pointer-events: none;
 }
 
-.harmony-backdrop img {
+.harmony-backdrop video {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -1048,7 +1048,7 @@ h1 .strike {
   font: inherit;
 }
 
-.hero-scene[data-scene-id="3"].is-active .harmony-backdrop img {
+.hero-scene[data-scene-id="3"].is-active .harmony-backdrop video {
   animation: harmony-image-enter 1500ms 120ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
