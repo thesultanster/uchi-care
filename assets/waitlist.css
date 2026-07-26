@@ -217,7 +217,7 @@ h1 .strike {
   height: 92px;
   border: 3px solid var(--sumi);
   border-radius: 50%;
-  background: var(--orange);
+  background: var(--sumi);
   color: white;
   font-family: var(--display);
   font-size: 21px;
@@ -231,7 +231,7 @@ h1 .strike {
 
 .learn-more-arrow {
   margin-top: 17px;
-  color: var(--orange);
+  color: var(--sumi);
   font-family: var(--body);
   font-size: 38px;
   font-weight: 900;
@@ -240,7 +240,7 @@ h1 .strike {
 }
 
 .learn-more-link:hover .learn-more-circle {
-  background: var(--orange-dark);
+  background: var(--sumi-soft);
   transform: translateY(-2px);
 }
 
