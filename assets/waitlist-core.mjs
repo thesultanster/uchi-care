@@ -9,6 +9,7 @@ const ATTRIBUTION_KEYS = {
   ad_id: 'adId',
   placement: 'placement',
 };
+const ATTRIBUTION_OUTPUT_KEYS = Object.freeze(Object.values(ATTRIBUTION_KEYS));
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const CLICK_ID_RE = /^[A-Za-z0-9._-]{1,220}$/;
@@ -22,13 +23,24 @@ function clean(value, maxLength = 160) {
   return normalized || null;
 }
 
+export function allowlistedAttribution(value = {}) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
+
+  const attribution = {};
+  for (const key of ATTRIBUTION_OUTPUT_KEYS) {
+    const cleanedValue = clean(value[key]);
+    if (cleanedValue) attribution[key] = cleanedValue;
+  }
+  return attribution;
+}
+
 export function attributionFromSearch(searchParams) {
   const attribution = {};
   for (const [queryKey, outputKey] of Object.entries(ATTRIBUTION_KEYS)) {
     const value = clean(searchParams.get(queryKey));
     if (value) attribution[outputKey] = value;
   }
-  return attribution;
+  return allowlistedAttribution(attribution);
 }
 
 export function normalizeClientEmail(value) {
@@ -37,6 +49,66 @@ export function normalizeClientEmail(value) {
     throw new Error('Enter a valid email address.');
   }
   return email;
+}
+
+export function webOnboardingHandoffPayload({
+  email,
+  sessionId,
+  attribution = {},
+  landingVariant,
+  pagePath,
+  captchaToken,
+  company = '',
+} = {}) {
+  const payload = {
+    email: normalizeClientEmail(email),
+    attribution: allowlistedAttribution(attribution),
+    company: clean(company) ?? '',
+  };
+
+  const optionalValues = {
+    sessionId: clean(sessionId, 64),
+    landingVariant: clean(landingVariant, 80),
+    pagePath: clean(pagePath, 160),
+    captchaToken: clean(captchaToken, 4096),
+  };
+  for (const [key, value] of Object.entries(optionalValues)) {
+    if (value) payload[key] = value;
+  }
+
+  return payload;
+}
+
+export function webOnboardingRedirectUrl(handoffToken) {
+  const token =
+    typeof handoffToken === 'string' ? handoffToken.trim() : '';
+  if (!/^[A-Za-z0-9_-]{32,512}$/.test(token)) {
+    throw new Error('Onboarding could not be started. Try again.');
+  }
+
+  const destination = new URL('https://stickychores.app/start');
+  // Fragments are never sent in HTTP requests or hosting access logs. The
+  // product reads this once in memory and scrubs it before any analytics run.
+  destination.hash = `handoff=${encodeURIComponent(token)}`;
+  return destination.toString();
+}
+
+export async function beginWebOnboarding({
+  request,
+  navigate,
+  ...handoffInput
+} = {}) {
+  if (typeof request !== 'function' || typeof navigate !== 'function') {
+    throw new Error('Onboarding could not be started. Try again.');
+  }
+
+  const result = await request(
+    'create-web-onboarding-handoff',
+    webOnboardingHandoffPayload(handoffInput),
+  );
+  const destination = webOnboardingRedirectUrl(result?.handoffToken);
+  navigate(destination);
+  return destination;
 }
 
 export function buildMetaClickCookie(clickId, nowMs = Date.now()) {

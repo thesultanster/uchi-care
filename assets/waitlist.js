@@ -1,7 +1,9 @@
 import {
   adMeasurementAllowed,
+  allowlistedAttribution,
   analyticsEventProperties,
   attributionFromSearch,
+  beginWebOnboarding,
   buildMetaClickCookie,
   normalizeClientEmail,
 } from './waitlist-core.mjs';
@@ -23,19 +25,27 @@ const META_PIXEL_ID =
   document.querySelector('meta[name="meta-pixel-id"]')?.content.trim() ?? '';
 const AMPLITUDE_API_KEY =
   document.querySelector('meta[name="amplitude-api-key"]')?.content.trim() ?? '';
+const TURNSTILE_SITE_KEY =
+  document.querySelector('meta[name="turnstile-site-key"]')?.content.trim() ?? '';
 const LANDING_VARIANT = document.body.dataset.landingVariant || 'manga-couples-v1';
+const ACQUISITION_MODE = document.body.dataset.acquisitionMode || 'waitlist';
+const IS_WEB_ONBOARDING = ACQUISITION_MODE === 'web-onboarding';
 const CONSENT_KEY = 'sticky_chores_ad_measurement';
 const ATTRIBUTION_KEY = 'sticky_chores_session_attribution';
 const SESSION_KEY = 'sticky_chores_marketing_session';
 const search = new URLSearchParams(window.location.search);
 const AMPLITUDE_EVENT_NAMES = {
   landing_view: 'Landing Viewed',
+  early_access_landing_viewed: 'Early Access Landing Viewed',
   form_start: 'Waitlist Form Started',
+  onboarding_cta_clicked: 'Onboarding CTA Clicked',
 };
 let amplitudeReadyPromise;
 let amplitudeInitialized = false;
 let amplitudeReplayPlugin;
 let amplitudeReplayAdded = false;
+let turnstileWidgetId;
+let turnstileLoadPromise;
 
 function mountScenePlayer(root) {
   const scenes = [...root.querySelectorAll('[data-scene]')];
@@ -267,7 +277,7 @@ if (Object.keys(searchAttribution).length > 0) {
   safeStorage(sessionStorage, 'set', ATTRIBUTION_KEY, JSON.stringify(searchAttribution));
 } else if (storedAttribution) {
   try {
-    attribution = JSON.parse(storedAttribution);
+    attribution = allowlistedAttribution(JSON.parse(storedAttribution));
   } catch {
     attribution = {};
   }
@@ -313,6 +323,65 @@ function loadExternalScript(source, marker) {
     script.addEventListener('load', resolve, { once: true });
     script.addEventListener('error', reject, { once: true });
     document.head.append(script);
+  });
+}
+
+function loadTurnstile() {
+  if (window.turnstile) return Promise.resolve(window.turnstile);
+  turnstileLoadPromise ||= loadExternalScript(
+    'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit',
+    'data-turnstile-loader',
+  ).then(() => {
+    if (!window.turnstile) throw new Error('Human verification did not load. Try again.');
+    return window.turnstile;
+  });
+  return turnstileLoadPromise;
+}
+
+async function getWebOnboardingCaptchaToken() {
+  if (!IS_WEB_ONBOARDING) return null;
+  if (!TURNSTILE_SITE_KEY) {
+    throw new Error('Early access is temporarily unavailable.');
+  }
+  const turnstile = await loadTurnstile();
+  const container = document.getElementById('web-onboarding-turnstile');
+  if (!container) throw new Error('Human verification is unavailable. Try again.');
+
+  return new Promise((resolve, reject) => {
+    const timeout = window.setTimeout(() => {
+      reject(new Error('Human verification timed out. Try again.'));
+    }, 12_000);
+    const settle = (callback, value) => {
+      window.clearTimeout(timeout);
+      callback(value);
+    };
+    const options = {
+      sitekey: TURNSTILE_SITE_KEY,
+      action: 'web_onboarding',
+      execution: 'execute',
+      appearance: 'interaction-only',
+      callback: (token) => settle(resolve, token),
+      'error-callback': () => {
+        settle(reject, new Error('Human verification failed. Try again.'));
+        return true;
+      },
+      'expired-callback': () => {
+        settle(reject, new Error('Human verification expired. Try again.'));
+      },
+      'timeout-callback': () => {
+        settle(reject, new Error('Human verification timed out. Try again.'));
+      },
+    };
+    try {
+      if (turnstileWidgetId == null) {
+        turnstileWidgetId = turnstile.render(container, options);
+      } else {
+        turnstile.reset(turnstileWidgetId);
+      }
+      turnstile.execute(turnstileWidgetId);
+    } catch {
+      settle(reject, new Error('Human verification failed. Try again.'));
+    }
   });
 }
 
@@ -438,7 +507,8 @@ export function trackCustomEvent(eventName) {
 const pageViewKey = `sticky_chores_viewed:${window.location.pathname}`;
 if (!safeStorage(sessionStorage, 'get', pageViewKey)) {
   safeStorage(sessionStorage, 'set', pageViewKey, '1');
-  trackCustomEvent('landing_view');
+  if (IS_WEB_ONBOARDING) trackCustomEvent('early_access_landing_viewed');
+  else trackCustomEvent('landing_view');
 }
 
 function readCookie(name) {
@@ -579,9 +649,26 @@ form?.addEventListener('submit', async (event) => {
 
   submitButton.disabled = true;
   submitButton.dataset.originalLabel ||= submitButton.textContent;
-  submitButton.textContent = 'Saving your spot…';
+  submitButton.textContent = IS_WEB_ONBOARDING ? 'Starting…' : 'Saving your spot…';
 
   try {
+    if (IS_WEB_ONBOARDING) {
+      trackCustomEvent('onboarding_cta_clicked');
+      const captchaToken = await getWebOnboardingCaptchaToken();
+      await beginWebOnboarding({
+        request: postJson,
+        navigate: (destination) => window.location.assign(destination),
+        email,
+        sessionId,
+        attribution,
+        landingVariant: LANDING_VARIANT,
+        pagePath: window.location.pathname,
+        captchaToken,
+        company: form.elements.namedItem('company')?.value || '',
+      });
+      return;
+    }
+
     const adConsent = hasAdMeasurementConsent();
     const fbclid = search.get('fbclid');
     const result = await postJson('waitlist-signup', {
@@ -618,7 +705,11 @@ form?.addEventListener('submit', async (event) => {
     submitButton.textContent = 'Spot saved ✓';
   } catch (error) {
     formStatus.classList.add('is-error');
-    formStatus.textContent = error.message || 'We could not save your spot. Try again.';
+    formStatus.textContent =
+      error.message ||
+      (IS_WEB_ONBOARDING
+        ? 'We could not start onboarding. Try again.'
+        : 'We could not save your spot. Try again.');
     submitButton.disabled = false;
     submitButton.textContent = submitButton.dataset.originalLabel;
   }
