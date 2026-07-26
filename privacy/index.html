@@ -43,14 +43,14 @@
             <tr><td>Optional household-friction answer</td><td>Understand which customer problems matter most</td><td>Supabase</td></tr>
             <tr><td>UTM campaign, campaign/ad IDs, placement, landing variant, and a temporary random session ID</td><td>Measure landing-page, signup, and email-confirmation conversion by campaign</td><td>Supabase</td></tr>
             <tr><td>Meta browser identifiers, hashed email, IP address, and browser information</td><td>Match a waitlist signup to a Meta ad unless you opt out or use Global Privacy Control</td><td>Sent to Meta; IP and browser information are not retained in our waitlist database</td></tr>
-            <tr><td>Pseudonymous device/session identifiers, page path, campaign parameters, clicks, scrolls, and masked page playback</td><td>Understand whether visitors see and use the important parts of the waitlist page</td><td>Amplitude; the waitlist form is blocked from Session Replay, and email or optional answers are not sent</td></tr>
+            <tr><td>Pseudonymous device/session identifiers, page path, campaign parameters, clicks, scrolls, and masked page playback</td><td>Understand whether visitors see and use the important parts of the waitlist page</td><td>Amplitude; the email input is masked in Session Replay, and email or optional answers are not sent</td></tr>
           </tbody>
         </table>
         <p>Waitlist emails use a confirmation step. You can unsubscribe using the link in an email. We retain unsubscribed status so we can honor that choice.</p>
 
         <h2>Website measurement choices</h2>
         <p>We use first-party funnel events—such as a landing-page view, form start, signup, and confirmation—to understand whether the website works. These events use a random session identifier and campaign parameters, not the email stored in the marketing-events table.</p>
-        <p>Amplitude records pseudonymous analytics events and a privacy-masked reconstruction of page activity, including clicks, scrolling, and which public sections appeared on screen. Text inputs are masked by default, and we additionally block the entire waitlist form from Session Replay. We do not set an Amplitude user ID or send the email address or optional household-friction answer to Amplitude.</p>
+        <p>Amplitude records pseudonymous analytics events and a privacy-masked reconstruction of page activity, including clicks, scrolling, and which public sections appeared on screen. Text inputs are masked by default, and we explicitly mask the waitlist email input and form status while keeping the form layout visible. We do not set an Amplitude user ID or send the email address or optional household-friction answer to Amplitude.</p>
         <p>Meta Pixel may load by default and set Meta measurement cookies. When you submit the form, the signup endpoint may send Meta a matching <em>Lead</em> conversion containing a one-way hash of your normalized email and technical matching data. The browser and server use the same event ID so Meta can deduplicate the conversion. You can turn Amplitude and Meta measurement off at any time through <em>Privacy choices</em> in the website footer. We also honor a browser Global Privacy Control signal. Opting out does not affect the website or your waitlist spot.</p>
 
         <h2>App data</h2>

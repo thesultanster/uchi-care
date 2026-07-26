@@ -131,9 +131,8 @@ async function addAmplitudeReplay() {
   amplitudeReplayPlugin ||= window.sessionReplay.plugin({
     sampleRate: 1,
     privacyConfig: {
-      blockSelector: ['#waitlist-form', '#waitlist-form-secondary'],
       defaultMaskLevel: 'light',
-      maskSelector: ['.form-status'],
+      maskSelector: ['#waitlist-email', '.form-status'],
     },
   });
   await window.amplitude.add(amplitudeReplayPlugin).promise;
