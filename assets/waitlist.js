@@ -5,6 +5,11 @@ import {
   buildMetaClickCookie,
   normalizeClientEmail,
 } from './waitlist-core.mjs';
+import {
+  fittedSceneScale,
+  nextReadySceneIndex,
+  sceneDuration,
+} from './scene-player-core.mjs';
 
 const configuredApiBase =
   document.querySelector('meta[name="waitlist-api-base"]')?.content.replace(/\/$/, '') ?? '';
@@ -31,6 +36,168 @@ let amplitudeReadyPromise;
 let amplitudeInitialized = false;
 let amplitudeReplayPlugin;
 let amplitudeReplayAdded = false;
+
+function mountScenePlayer(root) {
+  const scenes = [...root.querySelectorAll('[data-scene]')];
+  const fittedCards = [...root.querySelectorAll('[data-scene-fit-height]')];
+  const toggle = root.querySelector('[data-scene-toggle]');
+  const toggleLabel = root.querySelector('[data-scene-toggle-label]');
+  if (scenes.length === 0) return;
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const requestedSceneId = search.get('scene');
+  const requestedSceneIndex = scenes.findIndex(
+    (scene) =>
+      scene.dataset.sceneId === requestedSceneId &&
+      scene.hasAttribute('data-scene-ready'),
+  );
+  let activeIndex = requestedSceneIndex >= 0
+    ? requestedSceneIndex
+    : Math.max(
+        0,
+        scenes.findIndex((scene) => scene.classList.contains('is-active')),
+      );
+  let timer;
+  let isInViewport = true;
+  let isUserPaused = false;
+
+  function readySceneIndexes() {
+    return scenes.flatMap((scene, index) =>
+      scene.hasAttribute('data-scene-ready') ? [index] : [],
+    );
+  }
+
+  function fitSceneCards() {
+    const blockMargin =
+      Number.parseFloat(
+        window.getComputedStyle(root).getPropertyValue('--scene-card-block-margin'),
+      ) || 16;
+
+    fittedCards.forEach((card) => {
+      const scale = fittedSceneScale({
+        frameHeight: root.clientHeight,
+        frameWidth: root.clientWidth,
+        contentHeight: card.offsetHeight,
+        contentWidth: card.offsetWidth,
+        contentLeft: card.offsetLeft,
+        blockMargin,
+      });
+      card.style.setProperty('--scene-card-scale', scale.toFixed(4));
+    });
+  }
+
+  function canAutoplay() {
+    return (
+      readySceneIndexes().length > 0 &&
+      !isUserPaused &&
+      !reducedMotion.matches &&
+      !document.hidden &&
+      isInViewport
+    );
+  }
+
+  function updateToggle() {
+    if (!toggle || !toggleLabel) return;
+    const paused = isUserPaused || reducedMotion.matches;
+    toggle.hidden = !IS_LOCALHOST || reducedMotion.matches;
+    toggle.setAttribute('aria-pressed', String(isUserPaused));
+    toggleLabel.textContent = paused ? 'Play animation' : 'Pause animation';
+  }
+
+  function activateScene(nextIndex, reason = 'autoplay') {
+    const previousIndex = activeIndex;
+    const isReplay = nextIndex === activeIndex && reason !== 'init';
+    if (isReplay) {
+      scenes[activeIndex]?.classList.remove('is-active');
+      void root.offsetWidth;
+    }
+    activeIndex = Math.min(Math.max(nextIndex, 0), scenes.length - 1);
+
+    scenes.forEach((scene, index) => {
+      const isActive = index === activeIndex;
+      scene.classList.toggle('is-active', isActive);
+      scene.setAttribute('aria-hidden', String(!isActive));
+    });
+
+    const duration = sceneDuration(
+      scenes[activeIndex]?.dataset.sceneDuration,
+      sceneDuration(root.dataset.sceneDuration),
+    );
+    root.dataset.activeScene = String(activeIndex + 1);
+    root.style.setProperty('--scene-duration', `${duration}ms`);
+    root.dispatchEvent(
+      new CustomEvent('sticky-chores:scenechange', {
+        detail: {
+          activeIndex,
+          previousIndex,
+          reason,
+          sceneId: scenes[activeIndex]?.dataset.sceneId,
+        },
+      }),
+    );
+  }
+
+  function clearSceneTimer() {
+    window.clearTimeout(timer);
+    timer = undefined;
+  }
+
+  function scheduleNextScene() {
+    clearSceneTimer();
+    if (!canAutoplay()) return;
+    const duration = sceneDuration(
+      scenes[activeIndex]?.dataset.sceneDuration,
+      sceneDuration(root.dataset.sceneDuration),
+    );
+    timer = window.setTimeout(() => {
+      activateScene(nextReadySceneIndex(activeIndex, readySceneIndexes()));
+      scheduleNextScene();
+    }, duration);
+  }
+
+  function syncPlayback() {
+    updateToggle();
+    scheduleNextScene();
+  }
+
+  toggle?.addEventListener('click', () => {
+    isUserPaused = !isUserPaused;
+    syncPlayback();
+  });
+
+  root.addEventListener('sticky-chores:scenecomplete', () => {
+    if (!canAutoplay()) return;
+    activateScene(
+      nextReadySceneIndex(activeIndex, readySceneIndexes()),
+      'scenecomplete',
+    );
+    scheduleNextScene();
+  });
+
+  document.addEventListener('visibilitychange', syncPlayback);
+  reducedMotion.addEventListener?.('change', syncPlayback);
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(([entry]) => {
+      isInViewport = entry?.isIntersecting ?? true;
+      syncPlayback();
+    }, { threshold: 0.2 });
+    observer.observe(root);
+  }
+
+  if ('ResizeObserver' in window) {
+    const sizeObserver = new ResizeObserver(fitSceneCards);
+    sizeObserver.observe(root);
+  } else {
+    window.addEventListener('resize', fitSceneCards);
+  }
+
+  window.requestAnimationFrame(fitSceneCards);
+  activateScene(activeIndex, 'init');
+  syncPlayback();
+}
+
+document.querySelectorAll('[data-scene-player]').forEach(mountScenePlayer);
 
 function safeStorage(storage, operation, key, value) {
   try {

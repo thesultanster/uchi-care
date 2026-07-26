@@ -41,48 +41,233 @@
         <div class="hero-copy">
           <h1>Fight chores<br><span class="strike">Not each other</span></h1>
 
-          <article class="demo-chore-card" aria-label="Example Sticky Chores card: Dishes Reset">
-            <div class="demo-card-frame">
-              <header class="demo-card-header">
-                <span class="demo-card-title"><span aria-hidden="true">台</span> Dishes Reset</span>
-                <span class="demo-card-frequency">毎 Daily <strong aria-label="three stars">★★★</strong></span>
-              </header>
-              <div class="demo-card-art">
-                <img
-                  src="/assets/card-dishes.webp"
-                  width="640"
-                  height="357"
-                  alt="A tiny ghost facing a towering pile of dirty dishes in a dramatic manga kitchen"
-                >
-                <span class="demo-card-zone">台 Kitchen</span>
+          <section
+            class="hero-scene-player"
+            data-scene-player
+            data-scene-duration="9000"
+            data-active-scene="1"
+            aria-label="Animated Sticky Chores preview"
+          >
+            <div class="hero-scene-track">
+              <div class="hero-scene is-active" data-scene data-scene-id="1" data-scene-ready aria-hidden="false">
+                <div class="hero-scene-layer" data-scene-layer="background"></div>
+                <div class="hero-scene-layer" data-scene-layer="subject">
+                  <div class="scene-card-stack scene-one-card-stack" data-scene-fit-height>
+                    <article
+                      class="demo-chore-card scene-motion-card scene-card--dishes"
+                      data-card-zone="kitchen"
+                      aria-label="Example Sticky Chores card: Dishes"
+                    >
+                      <div class="demo-card-frame">
+                        <header class="demo-card-header">
+                          <span class="demo-card-title"><span aria-hidden="true">台</span> Dishes</span>
+                          <span class="demo-card-frequency">毎 Daily <strong aria-label="three stars">★★★</strong></span>
+                        </header>
+                        <div class="demo-card-art">
+                          <img
+                            src="/assets/card-dishes-mel.webp"
+                            width="640"
+                            height="360"
+                            alt="A Sticky Chores character heroically washing a plate beside a towering pile of dirty dishes"
+                          >
+                          <span class="demo-card-zone">台 Kitchen</span>
+                        </div>
+                      </div>
+                      <div class="demo-card-body">
+                        <div class="demo-card-divider"><span></span><b>Moves · 技</b><span></span></div>
+                        <dl class="demo-card-moves">
+                          <div>
+                            <dt><i>発</i> Spot it <small>発見</small></dt>
+                            <dd>The sink is becoming a raid boss.</dd>
+                          </div>
+                          <div>
+                            <dt><i>作</i> Sort it <small>作戦</small></dt>
+                            <dd>Rinse, load, and hand-wash the stragglers.</dd>
+                          </div>
+                          <div>
+                            <dt><i>撃</i> Do it <small>撃破</small></dt>
+                            <dd>Put everything away and reset the sink.</dd>
+                          </div>
+                        </dl>
+                        <div class="demo-card-done">
+                          <b>Done-right bar</b>
+                          <p>Sink empty. Dishes clean. No mystery fork.</p>
+                        </div>
+                        <footer class="demo-card-footer">
+                          <span class="demo-card-owner"><i aria-hidden="true">?</i> [Your Name Here]</span>
+                          <span>No. 048 / 151 · Kitchen</span>
+                        </footer>
+                      </div>
+                    </article>
+
+                    <article
+                      class="demo-chore-card scene-motion-card scene-card--trash"
+                      data-card-zone="cleaning"
+                      aria-label="Example Sticky Chores card: Take Out Trash"
+                    >
+                      <div class="demo-card-frame">
+                        <header class="demo-card-header">
+                          <span class="demo-card-title"><span aria-hidden="true">掃</span> Take Out Trash</span>
+                          <span class="demo-card-frequency">毎 Daily <strong aria-label="three stars">★★★</strong></span>
+                        </header>
+                        <div class="demo-card-art">
+                          <img
+                            src="/assets/card-trash-sammer.webp"
+                            width="640"
+                            height="360"
+                            alt="Sammer heroically carrying a tied trash bag and recycling bin toward an outdoor bin"
+                          >
+                          <span class="demo-card-zone">掃 Cleaning</span>
+                        </div>
+                      </div>
+                      <div class="demo-card-body">
+                        <div class="demo-card-divider"><span></span><b>Moves · 技</b><span></span></div>
+                        <dl class="demo-card-moves">
+                          <div>
+                            <dt><i>発</i> Spot it <small>発見</small></dt>
+                            <dd>The bin has entered its final form.</dd>
+                          </div>
+                          <div>
+                            <dt><i>作</i> Sort it <small>作戦</small></dt>
+                            <dd>Tie it tight and grab the recycling.</dd>
+                          </div>
+                          <div>
+                            <dt><i>撃</i> Do it <small>撃破</small></dt>
+                            <dd>Take it out and reset the liner.</dd>
+                          </div>
+                        </dl>
+                        <div class="demo-card-done">
+                          <b>Done-right bar</b>
+                          <p>Bins empty. Fresh liners. Nothing leaking.</p>
+                        </div>
+                        <footer class="demo-card-footer">
+                          <span class="demo-card-owner"><i aria-hidden="true">?</i> [Your Name Here]</span>
+                          <span>No. 067 / 151 · Cleaning</span>
+                        </footer>
+                      </div>
+                    </article>
+
+                    <article
+                      class="demo-chore-card scene-motion-card scene-card--sweep"
+                      data-card-zone="floors"
+                      aria-label="Example Sticky Chores card: Sweep the Floors"
+                    >
+                      <div class="demo-card-frame">
+                        <header class="demo-card-header">
+                          <span class="demo-card-title"><span aria-hidden="true">床</span> Sweep the Floors</span>
+                          <span class="demo-card-frequency">毎 Weekly <strong aria-label="two stars">★★</strong></span>
+                        </header>
+                        <div class="demo-card-art">
+                          <img
+                            src="/assets/card-sweep-danna.webp"
+                            width="640"
+                            height="360"
+                            alt="Danna dramatically sweeping a wave of dust and crumbs across a home floor"
+                          >
+                          <span class="demo-card-zone">床 Floors</span>
+                        </div>
+                      </div>
+                      <div class="demo-card-body">
+                        <div class="demo-card-divider"><span></span><b>Moves · 技</b><span></span></div>
+                        <dl class="demo-card-moves">
+                          <div>
+                            <dt><i>発</i> Spot it <small>発見</small></dt>
+                            <dd>The dust bunnies have formed a resistance.</dd>
+                          </div>
+                          <div>
+                            <dt><i>作</i> Sort it <small>作戦</small></dt>
+                            <dd>Get the edges, corners, and obvious furniture.</dd>
+                          </div>
+                          <div>
+                            <dt><i>撃</i> Do it <small>撃破</small></dt>
+                            <dd>Collect the pile and return the broom.</dd>
+                          </div>
+                        </dl>
+                        <div class="demo-card-done">
+                          <b>Done-right bar</b>
+                          <p>Floors clean. Corners clear. Broom parked.</p>
+                        </div>
+                        <footer class="demo-card-footer">
+                          <span class="demo-card-owner"><i aria-hidden="true">?</i> [Your Name Here]</span>
+                          <span>No. 031 / 151 · Floors</span>
+                        </footer>
+                      </div>
+                    </article>
+
+                    <article
+                      class="demo-chore-card scene-motion-card scene-card--laundry"
+                      data-card-zone="laundry"
+                      aria-label="Example Sticky Chores card: Fold the Laundry"
+                    >
+                      <div class="demo-card-frame">
+                        <header class="demo-card-header">
+                          <span class="demo-card-title"><span aria-hidden="true">洗</span> Fold the Laundry</span>
+                          <span class="demo-card-frequency">毎 Weekly <strong aria-label="two stars">★★</strong></span>
+                        </header>
+                        <div class="demo-card-art">
+                          <img
+                            src="/assets/card-laundry-jaan.webp"
+                            width="640"
+                            height="360"
+                            alt="Jaan calmly folding clothes beside an enormous mountain of clean laundry"
+                          >
+                          <span class="demo-card-zone">洗 Laundry</span>
+                        </div>
+                      </div>
+                      <div class="demo-card-body">
+                        <div class="demo-card-divider"><span></span><b>Moves · 技</b><span></span></div>
+                        <dl class="demo-card-moves">
+                          <div>
+                            <dt><i>発</i> Spot it <small>発見</small></dt>
+                            <dd>The clean pile is becoming furniture.</dd>
+                          </div>
+                          <div>
+                            <dt><i>作</i> Sort it <small>作戦</small></dt>
+                            <dd>Group everything by person and type.</dd>
+                          </div>
+                          <div>
+                            <dt><i>撃</i> Do it <small>撃破</small></dt>
+                            <dd>Fold, pair the socks, and put it all away.</dd>
+                          </div>
+                        </dl>
+                        <div class="demo-card-done">
+                          <b>Done-right bar</b>
+                          <p>Basket empty. Clothes away. No chair pile.</p>
+                        </div>
+                        <footer class="demo-card-footer">
+                          <span class="demo-card-owner"><i aria-hidden="true">?</i> [Your Name Here]</span>
+                          <span>No. 082 / 151 · Laundry</span>
+                        </footer>
+                      </div>
+                    </article>
+                  </div>
+                </div>
+                <div class="hero-scene-layer" data-scene-layer="copy">
+                  <p class="scene-one-statement"><span>Every chore</span><span>is a card</span></p>
+                  <p class="scene-owner-statement"><span>With one clear owner</span></p>
+                </div>
+              </div>
+              <div class="hero-scene" data-scene data-scene-id="2" aria-hidden="true">
+                <div class="hero-scene-layer" data-scene-layer="background"></div>
+                <div class="hero-scene-layer" data-scene-layer="subject"></div>
+                <div class="hero-scene-layer" data-scene-layer="copy"></div>
+              </div>
+              <div class="hero-scene" data-scene data-scene-id="3" aria-hidden="true">
+                <div class="hero-scene-layer" data-scene-layer="background"></div>
+                <div class="hero-scene-layer" data-scene-layer="subject"></div>
+                <div class="hero-scene-layer" data-scene-layer="copy"></div>
               </div>
             </div>
-            <div class="demo-card-body">
-              <div class="demo-card-divider"><span></span><b>Moves · 技</b><span></span></div>
-              <dl class="demo-card-moves">
-                <div>
-                  <dt><i>発</i> Spot <small>発見</small></dt>
-                  <dd>The sink is becoming a raid boss.</dd>
-                </div>
-                <div>
-                  <dt><i>作</i> Sort <small>作戦</small></dt>
-                  <dd>Rinse, load, and hand-wash the stragglers.</dd>
-                </div>
-                <div>
-                  <dt><i>撃</i> Clear <small>撃破</small></dt>
-                  <dd>Put everything away and reset the sink.</dd>
-                </div>
-              </dl>
-              <div class="demo-card-done">
-                <b>Done-right bar</b>
-                <p>Sink empty. Dishes clean. No mystery fork.</p>
-              </div>
-              <footer class="demo-card-footer">
-                <span class="demo-card-owner"><i>M</i> Mel</span>
-                <span>No. 048 / 151 · Kitchen</span>
-              </footer>
-            </div>
-          </article>
+            <button
+              class="scene-player-toggle"
+              type="button"
+              data-scene-toggle
+              aria-pressed="false"
+              hidden
+            >
+              <span data-scene-toggle-label>Pause animation</span>
+            </button>
+          </section>
 
           <form class="waitlist-card" id="waitlist-form" novalidate>
             <div class="form-row">
