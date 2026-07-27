@@ -4,6 +4,12 @@
   "type": "module",
   "scripts": {
     "generate:acquisition": "node scripts/generate-acquisition-pages.mjs",
-    "test": "node --test scripts/__tests__/*.test.mjs"
+    "test": "node --test scripts/__tests__/*.test.mjs",
+    "test:all": "npm test && npm run test:browser",
+    "test:browser": "playwright test --config=playwright.config.mjs",
+    "test:browser:install": "playwright install chromium webkit"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.57.0"
   }
 }
