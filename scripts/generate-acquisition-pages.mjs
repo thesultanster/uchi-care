@@ -16,7 +16,7 @@ export const ACQUISITION_VARIANTS = Object.freeze({
       ACQUISITION_MODE: 'waitlist',
       PRIMARY_CTA: 'Join the waitlist →',
       SECONDARY_CTA: 'Join the waitlist ↑',
-      TURNSTILE_SITE_KEY: '',
+      TURNSTILE_SITE_KEY: '0x4AAAAAAD-jFTnrv9lm3glJ',
     }),
   }),
   start: Object.freeze({

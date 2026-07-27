@@ -18,11 +18,11 @@
     <meta name="meta-pixel-id" content="4538451973065307">
     <!-- Public browser SDK identifier. Sensitive form content is masked in Session Replay. -->
     <meta name="amplitude-api-key" content="a91837e83a513113d378cbd6c604a576">
-    <!-- Public Turnstile site key. Empty on the waitlist; required on /start. -->
+    <!-- Public Turnstile site key. Both email entry paths use invisible verification. -->
     <meta name="turnstile-site-key" content="{{TURNSTILE_SITE_KEY}}">
     <link rel="icon" type="image/png" sizes="64x64" href="/assets/favicon-64.png">
     <link rel="stylesheet" href="/assets/waitlist.css?v=20260726-mobile-onboarding">
-    <script type="module" src="/assets/waitlist.js?v=20260726-web-onboarding"></script>
+    <script type="module" src="/assets/waitlist.js?v=20260727-founder-email-safety"></script>
   </head>
   <body data-landing-variant="{{LANDING_VARIANT}}" data-acquisition-mode="{{ACQUISITION_MODE}}">
     <a class="skip-link" href="#main">Skip to content</a>
@@ -664,7 +664,7 @@
           </details>
           <details>
             <summary>What emails will I receive?</summary>
-            <p>Only early-access invitations and meaningful product updates. Confirming your spot is optional, and every update includes an unsubscribe link.</p>
+            <p>You may receive one personal note from Sultan asking what is hardest about sharing chores at home, plus early-access invitations and meaningful product updates. Confirming your spot is optional, and every update includes an unsubscribe link.</p>
           </details>
         </div>
       </section>

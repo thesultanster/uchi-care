@@ -46,7 +46,7 @@
             <tr><td>Pseudonymous device/session identifiers, page path, campaign parameters, clicks, scrolls, and masked page playback</td><td>Understand whether visitors see and use the important parts of the waitlist page</td><td>Amplitude; the email input is masked in Session Replay, and email or optional answers are not sent</td></tr>
           </tbody>
         </table>
-        <p>Waitlist emails use a confirmation step. You can unsubscribe using the link in an email. We retain unsubscribed status so we can honor that choice.</p>
+        <p>Waitlist emails use a confirmation step. Submitting the waitlist may also send one personal note from a Sticky Chores founder asking what is hardest about sharing chores at home, even if you do not confirm. A permanent app account may queue the same note, but each email address can receive it only once across both paths. You can unsubscribe using the link in an email. We retain unsubscribed status so we can honor that choice before any retry.</p>
 
         <h2>Website measurement choices</h2>
         <p>We use first-party funnel events—such as a landing-page view, form start, signup, and confirmation—to understand whether the website works. These events use a random session identifier and campaign parameters, not the email stored in the marketing-events table.</p>
@@ -71,7 +71,7 @@
         <h2>Service providers</h2>
         <ul>
           <li><strong>Supabase</strong>: database, authentication, server functions, and file storage.</li>
-          <li><strong>Resend</strong>: waitlist confirmation, product emails, audience status, and unsubscribe handling.</li>
+          <li><strong>Resend</strong>: waitlist confirmation, the one-time founder feedback note, product emails, audience status, and unsubscribe handling.</li>
           <li><strong>Amplitude</strong>: pseudonymous website analytics and privacy-masked Session Replay unless you opt out or use Global Privacy Control.</li>
           <li><strong>Meta</strong>: website ad measurement through Meta Pixel and Conversions API unless you opt out or use Global Privacy Control.</li>
           <li><strong>Google Gemini API</strong>: receives selected images only when you ask the app to generate artwork.</li>

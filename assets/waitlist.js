@@ -338,8 +338,7 @@ function loadTurnstile() {
   return turnstileLoadPromise;
 }
 
-async function getWebOnboardingCaptchaToken() {
-  if (!IS_WEB_ONBOARDING) return null;
+async function getAcquisitionCaptchaToken() {
   if (!TURNSTILE_SITE_KEY) {
     throw new Error('Early access is temporarily unavailable.');
   }
@@ -654,7 +653,7 @@ form?.addEventListener('submit', async (event) => {
   try {
     if (IS_WEB_ONBOARDING) {
       trackCustomEvent('onboarding_cta_clicked');
-      const captchaToken = await getWebOnboardingCaptchaToken();
+      const captchaToken = await getAcquisitionCaptchaToken();
       await beginWebOnboarding({
         request: postJson,
         navigate: (destination) => window.location.assign(destination),
@@ -671,6 +670,7 @@ form?.addEventListener('submit', async (event) => {
 
     const adConsent = hasAdMeasurementConsent();
     const fbclid = search.get('fbclid');
+    const captchaToken = await getAcquisitionCaptchaToken();
     const result = await postJson('waitlist-signup', {
       email,
       painPoint: form.elements.namedItem('painPoint')?.value || null,
@@ -683,6 +683,7 @@ form?.addEventListener('submit', async (event) => {
       adMeasurementConsent: adConsent,
       fbp: adConsent ? readCookie('_fbp') : null,
       fbc: adConsent ? readCookie('_fbc') || buildMetaClickCookie(fbclid) : null,
+      captchaToken,
     });
 
     if (result.isNewLead && adConsent && window.fbq) {

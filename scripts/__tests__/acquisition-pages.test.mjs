@@ -85,7 +85,13 @@ test('keeps early access metadata and behavior distinct from the waitlist', () =
   assert.match(startHtml, /data-acquisition-mode="web-onboarding"/);
   assert.match(waitlistHtml, /data-acquisition-mode="waitlist"/);
   assert.doesNotMatch(waitlistHtml, /<meta name="robots"/);
+  assert.match(
+    waitlistHtml,
+    /<meta name="turnstile-site-key" content="0x4AAAAAAD-jFTnrv9lm3glJ">/,
+  );
   assert.match(waitlistScript, /if \(IS_WEB_ONBOARDING\) \{/);
+  assert.match(waitlistScript, /getAcquisitionCaptchaToken/);
+  assert.match(waitlistScript, /captchaToken,/);
   assert.match(
     waitlistScript,
     /navigate: \(destination\) => window\.location\.assign\(destination\)/,
