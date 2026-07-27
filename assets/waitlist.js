@@ -8,8 +8,11 @@ import {
   normalizeClientEmail,
 } from './waitlist-core.mjs';
 import {
+  animationCycleDuration,
   fittedSceneScale,
+  FRAME_ANIMATION_MILESTONES,
   nextReadySceneIndex,
+  reachedAnimationMilestones,
   sceneDuration,
 } from './scene-player-core.mjs';
 
@@ -30,6 +33,8 @@ const TURNSTILE_SITE_KEY =
 const LANDING_VARIANT = document.body.dataset.landingVariant || 'manga-couples-v1';
 const ACQUISITION_MODE = document.body.dataset.acquisitionMode || 'waitlist';
 const IS_WEB_ONBOARDING = ACQUISITION_MODE === 'web-onboarding';
+const ACQUISITION_SURFACE = IS_WEB_ONBOARDING ? 'start' : 'waitlist';
+const FRAME_ANIMATION_ID = 'hero_frame_story_v1';
 const CONSENT_KEY = 'sticky_chores_ad_measurement';
 const ATTRIBUTION_KEY = 'sticky_chores_session_attribution';
 const SESSION_KEY = 'sticky_chores_marketing_session';
@@ -39,6 +44,9 @@ const AMPLITUDE_EVENT_NAMES = {
   early_access_landing_viewed: 'Early Access Landing Viewed',
   form_start: 'Waitlist Form Started',
   onboarding_cta_clicked: 'Onboarding CTA Clicked',
+  frame_animation_started: 'Frame Animation Started',
+  frame_animation_progressed: 'Frame Animation Progressed',
+  frame_animation_completed: 'Frame Animation Completed',
 };
 let amplitudeReadyPromise;
 let amplitudeInitialized = false;
@@ -76,6 +84,126 @@ function mountScenePlayer(root) {
     return scenes.flatMap((scene, index) =>
       scene.hasAttribute('data-scene-ready') ? [index] : [],
     );
+  }
+
+  const initialSceneId = scenes[activeIndex]?.dataset.sceneId || String(activeIndex + 1);
+  const readyIndexes = readySceneIndexes();
+  const animationCycleMs = animationCycleDuration(
+    readyIndexes.map(
+      (index) => scenes[index]?.dataset.sceneDuration || root.dataset.sceneDuration,
+    ),
+    sceneDuration(root.dataset.sceneDuration),
+  );
+  const animationViewKey =
+    `sticky_chores_frame_animation:${window.location.pathname}:${FRAME_ANIMATION_ID}`;
+  let animationTrackingState = 'idle';
+  let animationPlaybackMs = 0;
+  let animationSegmentStartedAt;
+  let animationProgressTimer;
+
+  function animationEventProperties(progressPercent) {
+    return {
+      animation_id: FRAME_ANIMATION_ID,
+      animation_cycle_ms: animationCycleMs,
+      scene_count: readyIndexes.length,
+      initial_scene_id: initialSceneId,
+      active_scene_id:
+        scenes[activeIndex]?.dataset.sceneId || String(activeIndex + 1),
+      progress_percent: progressPercent,
+      active_playback_ms: Math.round(animationPlaybackMs),
+      debug_scene_override: requestedSceneId !== null,
+    };
+  }
+
+  function trackAnimationMilestone(progressPercent) {
+    const eventName =
+      progressPercent >= 100
+        ? 'frame_animation_completed'
+        : 'frame_animation_progressed';
+    trackAmplitudeEvent(eventName, animationEventProperties(progressPercent));
+  }
+
+  function clearAnimationProgressTimer() {
+    window.clearTimeout(animationProgressTimer);
+    animationProgressTimer = undefined;
+  }
+
+  function sampleAnimationProgress(now = window.performance.now()) {
+    if (animationSegmentStartedAt == null || animationTrackingState !== 'active') {
+      return;
+    }
+
+    const previousPlaybackMs = animationPlaybackMs;
+    animationPlaybackMs = Math.min(
+      animationCycleMs,
+      animationPlaybackMs + Math.max(0, now - animationSegmentStartedAt),
+    );
+    animationSegmentStartedAt = now;
+
+    for (const milestone of reachedAnimationMilestones({
+      previousElapsedMs: previousPlaybackMs,
+      elapsedMs: animationPlaybackMs,
+      totalDurationMs: animationCycleMs,
+    })) {
+      trackAnimationMilestone(milestone);
+    }
+
+    if (animationPlaybackMs >= animationCycleMs) {
+      animationTrackingState = 'complete';
+      animationSegmentStartedAt = undefined;
+      clearAnimationProgressTimer();
+    }
+  }
+
+  function scheduleAnimationProgress() {
+    clearAnimationProgressTimer();
+    if (animationTrackingState !== 'active' || animationSegmentStartedAt == null) return;
+
+    const nextMilestone = FRAME_ANIMATION_MILESTONES.find(
+      (milestone) => animationPlaybackMs < animationCycleMs * milestone / 100,
+    );
+    if (nextMilestone == null) return;
+
+    const targetPlaybackMs = animationCycleMs * nextMilestone / 100;
+    const delay = Math.max(50, targetPlaybackMs - animationPlaybackMs);
+    animationProgressTimer = window.setTimeout(() => {
+      sampleAnimationProgress();
+      scheduleAnimationProgress();
+    }, delay);
+  }
+
+  function syncAnimationTracking() {
+    if (animationTrackingState === 'complete' || animationTrackingState === 'skipped') {
+      return;
+    }
+
+    if (animationTrackingState === 'idle' && !hasAdMeasurementConsent()) {
+      animationTrackingState = 'skipped';
+      return;
+    }
+
+    if (!canAutoplay()) {
+      sampleAnimationProgress();
+      animationSegmentStartedAt = undefined;
+      clearAnimationProgressTimer();
+      return;
+    }
+
+    if (animationTrackingState === 'idle') {
+      if (safeStorage(sessionStorage, 'get', animationViewKey)) {
+        animationTrackingState = 'skipped';
+        return;
+      }
+      safeStorage(sessionStorage, 'set', animationViewKey, '1');
+      animationTrackingState = 'active';
+      trackAmplitudeEvent(
+        'frame_animation_started',
+        animationEventProperties(0),
+      );
+    }
+
+    animationSegmentStartedAt ??= window.performance.now();
+    scheduleAnimationProgress();
   }
 
   function fitSceneCards() {
@@ -206,6 +334,7 @@ function mountScenePlayer(root) {
     updateToggle();
     syncSceneVideos();
     scheduleNextScene();
+    syncAnimationTracking();
   }
 
   toggle?.addEventListener('click', () => {
@@ -244,8 +373,6 @@ function mountScenePlayer(root) {
   activateScene(activeIndex, 'init');
   syncPlayback();
 }
-
-document.querySelectorAll('[data-scene-player]').forEach(mountScenePlayer);
 
 function safeStorage(storage, operation, key, value) {
   try {
@@ -478,6 +605,8 @@ function trackAmplitudeEvent(eventName, additionalProperties = {}) {
       attribution,
       landingVariant: LANDING_VARIANT,
       pagePath: window.location.pathname,
+      acquisitionSurface: ACQUISITION_SURFACE,
+      acquisitionMode: ACQUISITION_MODE,
     }),
     ...additionalProperties,
   };
@@ -509,6 +638,8 @@ if (!safeStorage(sessionStorage, 'get', pageViewKey)) {
   if (IS_WEB_ONBOARDING) trackCustomEvent('early_access_landing_viewed');
   else trackCustomEvent('landing_view');
 }
+
+document.querySelectorAll('[data-scene-player]').forEach(mountScenePlayer);
 
 function readCookie(name) {
   const prefix = `${name}=`;

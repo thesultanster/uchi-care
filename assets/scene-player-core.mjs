@@ -1,4 +1,5 @@
 export const DEFAULT_SCENE_DURATION = 6500;
+export const FRAME_ANIMATION_MILESTONES = Object.freeze([25, 50, 75, 100]);
 
 export function nextSceneIndex(currentIndex, sceneCount) {
   if (!Number.isInteger(sceneCount) || sceneCount < 1) return 0;
@@ -28,6 +29,35 @@ export function sceneDuration(value, fallback = DEFAULT_SCENE_DURATION) {
   const parsed = Number.parseInt(value, 10);
   if (!Number.isFinite(parsed)) return fallback;
   return Math.min(Math.max(parsed, 1000), 30_000);
+}
+
+export function animationCycleDuration(values, fallback = DEFAULT_SCENE_DURATION) {
+  if (!Array.isArray(values) || values.length === 0) return fallback;
+  return values.reduce(
+    (total, value) => total + sceneDuration(value, fallback),
+    0,
+  );
+}
+
+export function reachedAnimationMilestones({
+  previousElapsedMs = 0,
+  elapsedMs = 0,
+  totalDurationMs,
+  milestones = FRAME_ANIMATION_MILESTONES,
+} = {}) {
+  if (!Number.isFinite(totalDurationMs) || totalDurationMs <= 0) return [];
+
+  const previousProgress =
+    Math.max(0, Number(previousElapsedMs) || 0) / totalDurationMs * 100;
+  const currentProgress =
+    Math.max(0, Number(elapsedMs) || 0) / totalDurationMs * 100;
+
+  return milestones.filter(
+    (milestone) =>
+      Number.isFinite(milestone) &&
+      milestone > previousProgress &&
+      milestone <= currentProgress,
+  );
 }
 
 export function fittedSceneScale({
