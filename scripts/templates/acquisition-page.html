@@ -3,15 +3,14 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="noindex, nofollow">
-    <title>Sticky Chores — The Manga Chore Game for Couples</title>
+{{ROBOTS_META}}    <title>Sticky Chores — The Manga Chore Game for Couples</title>
     <meta name="description" content="Fight chores, not each other. Sticky Chores turns housework into manga cards, shared quests, and satisfying proof of done. Join the iPhone waitlist.">
-    <link rel="canonical" href="https://uchi.care/start/">
+    <link rel="canonical" href="{{CANONICAL_URL}}">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Sticky Chores by Uchi">
     <meta property="og:title" content="Sticky Chores — Fight chores. Not each other.">
     <meta property="og:description" content="The manga chore game for couples. Join the iPhone early-access waitlist.">
-    <meta property="og:url" content="https://uchi.care/start/">
+    <meta property="og:url" content="{{CANONICAL_URL}}">
     <meta property="og:image" content="https://uchi.care/assets/card-car-charging.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="waitlist-api-base" content="https://ldjcjjywxerjgjvqrcrt.supabase.co/functions/v1">
@@ -20,12 +19,12 @@
     <!-- Public browser SDK identifier. Sensitive form content is masked in Session Replay. -->
     <meta name="amplitude-api-key" content="a91837e83a513113d378cbd6c604a576">
     <!-- Public Turnstile site key. Empty on the waitlist; required on /start. -->
-    <meta name="turnstile-site-key" content="0x4AAAAAAD-jFTnrv9lm3glJ">
+    <meta name="turnstile-site-key" content="{{TURNSTILE_SITE_KEY}}">
     <link rel="icon" type="image/png" sizes="64x64" href="/assets/favicon-64.png">
     <link rel="stylesheet" href="/assets/waitlist.css?v=20260726-mobile-onboarding">
     <script type="module" src="/assets/waitlist.js?v=20260726-web-onboarding"></script>
   </head>
-  <body data-landing-variant="manga-couples-coop-v3-web-onboarding" data-acquisition-mode="web-onboarding">
+  <body data-landing-variant="{{LANDING_VARIANT}}" data-acquisition-mode="{{ACQUISITION_MODE}}">
     <a class="skip-link" href="#main">Skip to content</a>
 
     <header class="shell topbar">
@@ -452,7 +451,7 @@
                 <label class="visually-hidden" for="waitlist-email">Email for early access</label>
                 <input id="waitlist-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required>
               </div>
-              <button class="primary-button" type="submit">Get started →</button>
+              <button class="primary-button" type="submit">{{PRIMARY_CTA}}</button>
             </div>
             <div class="field" hidden>
               <label for="pain-point">What gets sticky at home? <span aria-hidden="true">·</span> Optional</label>
@@ -678,7 +677,7 @@
           </div>
           <form class="waitlist-card" id="waitlist-form-secondary" onsubmit="document.getElementById('waitlist-email').focus(); document.getElementById('waitlist-form').scrollIntoView({behavior:'smooth',block:'center'}); return false;">
             <p><strong>Join couples testing Sticky Chores on iPhone first.</strong></p>
-            <button class="primary-button" type="submit">Get started ↑</button>
+            <button class="primary-button" type="submit">{{SECONDARY_CTA}}</button>
           </form>
         </div>
       </section>

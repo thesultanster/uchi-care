@@ -1,0 +1,9 @@
+{
+  "name": "uchi-care-marketing",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate:acquisition": "node scripts/generate-acquisition-pages.mjs",
+    "test": "node --test scripts/__tests__/*.test.mjs"
+  }
+}
