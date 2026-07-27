@@ -15,7 +15,12 @@ import {
   reachedAnimationMilestones,
   sceneDuration,
 } from './scene-player-core.mjs';
+import {
+  applyStartLandingVariant,
+  resolveStartLandingVariant,
+} from './landing-variants.mjs';
 
+const search = new URLSearchParams(window.location.search);
 const configuredApiBase =
   document.querySelector('meta[name="waitlist-api-base"]')?.content.replace(/\/$/, '') ?? '';
 const IS_LOCALHOST =
@@ -30,15 +35,24 @@ const AMPLITUDE_API_KEY =
   document.querySelector('meta[name="amplitude-api-key"]')?.content.trim() ?? '';
 const TURNSTILE_SITE_KEY =
   document.querySelector('meta[name="turnstile-site-key"]')?.content.trim() ?? '';
-const LANDING_VARIANT = document.body.dataset.landingVariant || 'manga-couples-v1';
 const ACQUISITION_MODE = document.body.dataset.acquisitionMode || 'waitlist';
 const IS_WEB_ONBOARDING = ACQUISITION_MODE === 'web-onboarding';
 const ACQUISITION_SURFACE = IS_WEB_ONBOARDING ? 'start' : 'waitlist';
+const LANDING_VARIANT_RESOLUTION = IS_WEB_ONBOARDING
+  ? resolveStartLandingVariant(search, {
+      defaultVariant:
+        document.body.dataset.landingVariant || 'manga-couples-activation-v1',
+    })
+  : null;
+if (LANDING_VARIANT_RESOLUTION) {
+  applyStartLandingVariant(document, LANDING_VARIANT_RESOLUTION);
+}
+const LANDING_VARIANT =
+  document.body.dataset.landingVariant || 'manga-couples-v1';
 const FRAME_ANIMATION_ID = 'hero_frame_story_v1';
 const CONSENT_KEY = 'sticky_chores_ad_measurement';
 const ATTRIBUTION_KEY = 'sticky_chores_session_attribution';
 const SESSION_KEY = 'sticky_chores_marketing_session';
-const search = new URLSearchParams(window.location.search);
 const AMPLITUDE_EVENT_NAMES = {
   landing_view: 'Landing Viewed',
   early_access_landing_viewed: 'Early Access Landing Viewed',
@@ -95,7 +109,7 @@ function mountScenePlayer(root) {
     sceneDuration(root.dataset.sceneDuration),
   );
   const animationViewKey =
-    `sticky_chores_frame_animation:${window.location.pathname}:${FRAME_ANIMATION_ID}`;
+    `sticky_chores_frame_animation:${window.location.pathname}:${LANDING_VARIANT}:${FRAME_ANIMATION_ID}`;
   let animationTrackingState = 'idle';
   let animationPlaybackMs = 0;
   let animationSegmentStartedAt;
@@ -604,6 +618,8 @@ function trackAmplitudeEvent(eventName, additionalProperties = {}) {
       sessionId,
       attribution,
       landingVariant: LANDING_VARIANT,
+      landingVariantSource:
+        LANDING_VARIANT_RESOLUTION?.source ?? 'document',
       pagePath: window.location.pathname,
       acquisitionSurface: ACQUISITION_SURFACE,
       acquisitionMode: ACQUISITION_MODE,
@@ -632,7 +648,8 @@ export function trackCustomEvent(eventName) {
   ).catch(() => undefined);
 }
 
-const pageViewKey = `sticky_chores_viewed:${window.location.pathname}`;
+const pageViewKey =
+  `sticky_chores_viewed:${window.location.pathname}:${LANDING_VARIANT}`;
 if (!safeStorage(sessionStorage, 'get', pageViewKey)) {
   safeStorage(sessionStorage, 'set', pageViewKey, '1');
   if (IS_WEB_ONBOARDING) trackCustomEvent('early_access_landing_viewed');

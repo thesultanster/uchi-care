@@ -23,9 +23,9 @@
     <meta name="turnstile-site-key" content="0x4AAAAAAD-jFTnrv9lm3glJ">
     <link rel="icon" type="image/png" sizes="64x64" href="/assets/favicon-64.png">
     <link rel="stylesheet" href="/assets/waitlist.css?v=20260726-mobile-onboarding">
-    <script type="module" src="/assets/waitlist.js?v=20260727-animation-retention"></script>
+    <script type="module" src="/assets/waitlist.js?v=20260727-landing-variants"></script>
   </head>
-  <body data-landing-variant="manga-couples-coop-v3-web-onboarding" data-acquisition-mode="web-onboarding">
+  <body data-landing-variant="manga-couples-activation-v1" data-acquisition-mode="web-onboarding">
     <a class="skip-link" href="#main">Skip to content</a>
 
     <header class="shell topbar">
@@ -42,7 +42,7 @@
     <main id="main">
       <section class="shell hero">
         <div class="hero-copy">
-          <h1>Fight chores<br><span class="strike">Not each other</span></h1>
+          <h1><span data-landing-copy="heroLead">Fight chores</span><br><span class="strike" data-landing-copy="heroEmphasis">Not each other</span></h1>
 
           <section
             class="hero-scene-player"
@@ -452,7 +452,7 @@
                 <label class="visually-hidden" for="waitlist-email">Email for early access</label>
                 <input id="waitlist-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required>
               </div>
-              <button class="primary-button" type="submit">Get started →</button>
+              <button class="primary-button" type="submit" data-landing-copy="primaryCta">Get started →</button>
             </div>
             <div class="field" hidden>
               <label for="pain-point">What gets sticky at home? <span aria-hidden="true">·</span> Optional</label>
@@ -673,12 +673,12 @@
       <section class="finale" id="join">
         <div class="shell finale-grid">
           <div>
-            <p class="chapter">A calmer way to run your home</p>
-            <h2>Make the invisible work visible.</h2>
+            <p class="chapter" data-landing-copy="finaleChapter">A calmer way to run your home</p>
+            <h2 data-landing-copy="finaleHeadline">Make the invisible work visible.</h2>
           </div>
           <form class="waitlist-card" id="waitlist-form-secondary" onsubmit="document.getElementById('waitlist-email').focus(); document.getElementById('waitlist-form').scrollIntoView({behavior:'smooth',block:'center'}); return false;">
-            <p><strong>Join couples testing Sticky Chores on iPhone first.</strong></p>
-            <button class="primary-button" type="submit">Get started ↑</button>
+            <p><strong data-landing-copy="finalePitch">Join couples testing Sticky Chores on iPhone first.</strong></p>
+            <button class="primary-button" type="submit" data-landing-copy="secondaryCta">Get started ↑</button>
           </form>
         </div>
       </section>

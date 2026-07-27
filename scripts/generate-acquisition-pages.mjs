@@ -24,7 +24,7 @@ export const ACQUISITION_VARIANTS = Object.freeze({
     replacements: Object.freeze({
       ROBOTS_META: '    <meta name="robots" content="noindex, nofollow">\n',
       CANONICAL_URL: 'https://uchi.care/start/',
-      LANDING_VARIANT: 'manga-couples-coop-v3-web-onboarding',
+      LANDING_VARIANT: 'manga-couples-activation-v1',
       ACQUISITION_MODE: 'web-onboarding',
       PRIMARY_CTA: 'Get started →',
       SECONDARY_CTA: 'Get started ↑',

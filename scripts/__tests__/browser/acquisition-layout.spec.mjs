@@ -275,3 +275,34 @@ test('the browser guard fails every external write closed', async ({ page }) => 
   });
   expect(network.completedExternalRequests).toEqual([]);
 });
+
+test('start resolves an allowlisted landing variant and rejects unknown variants', async ({
+  page,
+}) => {
+  await installNetworkBarrier(page, localOrigin);
+  await page.goto(
+    `${localOrigin}/start/?landing_variant=manga-couples-activation-v1`,
+    { waitUntil: 'domcontentloaded' },
+  );
+  await expect(page.locator('body')).toHaveAttribute(
+    'data-landing-variant',
+    'manga-couples-activation-v1',
+  );
+  await expect(page.locator('body')).toHaveAttribute(
+    'data-landing-variant-source',
+    'query',
+  );
+
+  await page.goto(
+    `${localOrigin}/start/?landing_variant=unpublished-ad-promise`,
+    { waitUntil: 'domcontentloaded' },
+  );
+  await expect(page.locator('body')).toHaveAttribute(
+    'data-landing-variant',
+    'manga-couples-activation-v1',
+  );
+  await expect(page.locator('body')).toHaveAttribute(
+    'data-landing-variant-source',
+    'default',
+  );
+});

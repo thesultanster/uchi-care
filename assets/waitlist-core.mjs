@@ -157,6 +157,7 @@ export function analyticsEventProperties({
   sessionId,
   attribution = {},
   landingVariant,
+  landingVariantSource,
   pagePath,
   acquisitionSurface,
   acquisitionMode,
@@ -164,6 +165,7 @@ export function analyticsEventProperties({
   const properties = {
     marketing_session_id: clean(sessionId, 64),
     landing_variant: clean(landingVariant, 80),
+    landing_variant_source: clean(landingVariantSource, 20),
     page_path: clean(pagePath, 160),
     acquisition_surface: clean(acquisitionSurface, 40),
     acquisition_mode: clean(acquisitionMode, 40),

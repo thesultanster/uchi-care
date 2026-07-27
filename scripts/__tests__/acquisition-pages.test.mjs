@@ -7,6 +7,10 @@ import {
   beginWebOnboarding,
 } from '../../assets/waitlist-core.mjs';
 import {
+  DEFAULT_START_LANDING_VARIANT,
+  resolveStartLandingVariant,
+} from '../../assets/landing-variants.mjs';
+import {
   ACQUISITION_VARIANTS,
   renderAcquisitionPage,
 } from '../generate-acquisition-pages.mjs';
@@ -52,11 +56,11 @@ function normalizeVariantMarkup(html) {
       'data-acquisition-mode="{{ACQUISITION_MODE}}"',
     )
     .replace(
-      /(<form class="waitlist-card" id="waitlist-form"[\s\S]*?<button class="primary-button" type="submit">)[^<]+(<\/button>)/,
+      /(<form class="waitlist-card" id="waitlist-form"[\s\S]*?<button[^>]*data-landing-copy="primaryCta"[^>]*>)[^<]+(<\/button>)/,
       '$1{{PRIMARY_CTA}}$2',
     )
     .replace(
-      /(<form class="waitlist-card" id="waitlist-form-secondary"[\s\S]*?<button class="primary-button" type="submit">)[^<]+(<\/button>)/,
+      /(<form class="waitlist-card" id="waitlist-form-secondary"[\s\S]*?<button[^>]*data-landing-copy="secondaryCta"[^>]*>)[^<]+(<\/button>)/,
       '$1{{SECONDARY_CTA}}$2',
     );
 }
@@ -83,6 +87,10 @@ test('keeps early access metadata and behavior distinct from the waitlist', () =
   assert.match(startHtml, /<meta name="robots" content="noindex, nofollow">/);
   assert.match(startHtml, /<link rel="canonical" href="https:\/\/uchi\.care\/start\/">/);
   assert.match(startHtml, /data-acquisition-mode="web-onboarding"/);
+  assert.match(
+    startHtml,
+    /data-landing-variant="manga-couples-activation-v1"/,
+  );
   assert.match(waitlistHtml, /data-acquisition-mode="waitlist"/);
   assert.doesNotMatch(waitlistHtml, /<meta name="robots"/);
   assert.match(
@@ -97,6 +105,42 @@ test('keeps early access metadata and behavior distinct from the waitlist', () =
     /navigate: \(destination\) => window\.location\.assign\(destination\)/,
   );
   assert.match(waitlistScript, /await beginWebOnboarding\(/);
+  assert.match(waitlistScript, /resolveStartLandingVariant\(search/);
+  assert.match(
+    waitlistScript,
+    /sticky_chores_viewed:\$\{window\.location\.pathname\}:\$\{LANDING_VARIANT\}/,
+  );
+  assert.match(
+    waitlistScript,
+    /sticky_chores_frame_animation:\$\{window\.location\.pathname\}:\$\{LANDING_VARIANT\}:\$\{FRAME_ANIMATION_ID\}/,
+  );
+});
+
+test('selects only configured start variants and safely falls back', () => {
+  const explicit = resolveStartLandingVariant(
+    new URLSearchParams(
+      `landing_variant=${DEFAULT_START_LANDING_VARIANT}`,
+    ),
+  );
+  assert.equal(explicit.variant.id, DEFAULT_START_LANDING_VARIANT);
+  assert.equal(explicit.source, 'query');
+  assert.equal(explicit.fellBack, false);
+
+  const legacy = resolveStartLandingVariant(
+    new URLSearchParams(
+      'landing_variant=manga-couples-coop-v3-web-onboarding',
+    ),
+  );
+  assert.equal(legacy.variant.id, DEFAULT_START_LANDING_VARIANT);
+  assert.equal(legacy.source, 'query');
+  assert.equal(legacy.fellBack, false);
+
+  const unknown = resolveStartLandingVariant(
+    new URLSearchParams('landing_variant=unpublished-ad-promise'),
+  );
+  assert.equal(unknown.variant.id, DEFAULT_START_LANDING_VARIANT);
+  assert.equal(unknown.source, 'default');
+  assert.equal(unknown.fellBack, true);
 });
 
 test('passes only allowlisted attribution and an opaque handoff to the product', async () => {
